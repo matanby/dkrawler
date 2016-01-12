@@ -1,13 +1,15 @@
 import sys, os
 from pymongo import MongoClient
-from conf import *
+
+sys.path.insert(0, "..")
+import conf
 
 def main():
 	if len(sys.argv) != 2:
 		print "USAGE: %s <MODULI_FILE>" % sys.argv[0]
 		return
 	moduli_file_path = sys.argv[1]
-	client = MongoClient(DATABASE_SERVER, DATABASE_PORT)
+	client = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
 	moduli_file = open(moduli_file_path, 'w')
 	cursor = client.dionysus.dnskey.find({'N':{'$exists':True}})
 	for entry in cursor:

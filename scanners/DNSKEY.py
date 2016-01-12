@@ -59,4 +59,5 @@ def scan(resolver, domain, client):
 
 	except dns.resolver.NoAnswer, e:
 		logging.info('No DNSKEY entry for %s' % domain)
+		raise dns.resolver.NXDOMAIN()
 

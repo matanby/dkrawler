@@ -1,10 +1,12 @@
 import sys
-from conf import *
 from pymongo import MongoClient
+
+sys.path.insert(0, "..")
+import conf
 
 def main():
 
-	client = MongoClient(DATABASE_SERVER, DATABASE_PORT)
+	client = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
 	cursor = client.dionysus.dnskey.find({'N':{'$exists':True}})
 	N_map = {}
 	for entry in cursor:

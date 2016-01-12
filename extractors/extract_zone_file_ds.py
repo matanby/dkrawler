@@ -1,7 +1,9 @@
 import sys, re
-from conf import *
 from pymongo import MongoClient
-from dal import *
+
+sys.path.insert(0, "..")
+import conf
+import dal
 
 #The description of the seeds origin in the database
 ORIGIN_DESCRIPTION = "ZoneFileDS"
@@ -20,7 +22,7 @@ def main():
 	zone_origin = sys.argv[2].lower()
 
 	#Connecting to the database
-	client = MongoClient(DATABASE_SERVER, DATABASE_PORT)
+	client = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
 
 	#Parsing each DS entry in the zone file, and extracting the domain name from it 
 	#Since the zone files are so large, dnspython fails to handle them...
@@ -44,7 +46,7 @@ def main():
 			domain = domain + "." + zone_origin
 
 		#Inserting the entry to the database 
-		domains_added += insert_seed(client, domain, ORIGIN_DESCRIPTION)
+		domains_added += dal.insert_seed(client, domain, ORIGIN_DESCRIPTION)
 		if domains_added % PRINT_STEP == 0:
 			print '[+] Added %d domains...' % domains_added
 

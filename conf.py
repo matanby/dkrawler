@@ -13,7 +13,12 @@ DATABASE_PORT = 27017
 '''
 The number of threads in the scanning thread pool
 '''
-THREAD_POOL_SIZE = 64
+THREAD_POOL_SIZE = 256
+
+'''
+The maximal number of consecutive timeouts allowed
+'''
+MAX_TIMEOUTS = 1
 
 '''
 The period, in seconds, after which seeds which have already been scanned are re-scanned
@@ -43,4 +48,4 @@ LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 '''
 The timeout, in seconds, for each query performed
 '''
-QUERY_TIMEOUT = 3
+QUERY_TIMEOUT = 7 

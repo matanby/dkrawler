@@ -27,6 +27,18 @@ def configure_logging():
 	logger.addHandler(ch)
 	logger.addHandler(fh)
 
+def exec_retry_scan(scan_func, dns_resolver, domain, client):
+	num_timeouts = 0
+	while True:
+		try:
+			scan_func(dns_resolver, domain, client)
+			return
+		except dns.exception.Timeout as e:
+			num_timeouts += 1
+			logging.warning('Got %d timeouts when querying %s' % (num_timeouts, domain))
+			if num_timeouts == MAX_TIMEOUTS:
+				raise
+
 def scan_domain(domain):
 
 	#After forking, the DB_CLIENT might not be set
@@ -41,7 +53,7 @@ def scan_domain(domain):
 	bad_seed = False
 	for scan_func in scanners.scan_functions:
 		try:
-			scan_func(dns_resolver, domain, DB_CLIENT)
+			exec_retry_scan(scan_func, dns_resolver, domain, DB_CLIENT)
 		except dns.resolver.NXDOMAIN as e:
 			logging.warning('Got NXDomain when trying to scan %s, marking bad seed' % domain)
 			bad_seed = True
@@ -55,7 +67,7 @@ def scan_domain(domain):
 			bad_seed = True
 			break			
 		except dns.resolver.NoAnswer as e:
-			logging.warning('No answer received for %s, skipping')
+			logging.warning('No answer received for %s, skipping' % domain)
 		except dns.exception.Timeout as e:
 			logging.warning('Got timeout when querying %s, skipping' % domain)
 		except Exception, ex:
@@ -73,15 +85,14 @@ def main():
 
 	#Adding a scan task for each seed
 	logging.info('Searching for seeds')
-	cursor = client.dionysus.seeds.find({'last_scan':{'$lt':time.time() - RESCAN_PERIOD},
-										 'bad': False});
+#	cursor = client.dionysus.seeds.find({'last_scan':{'$lt':time.time() - RESCAN_PERIOD},
+#										 'bad': False});
+	cursor = client.dionysus.seeds.find({'bad': False});
 	logging.info('Found %d seeds' % cursor.count())
-	while True:
-		try:
-			seed = cursor.next()
-			pool.apply_async(scan_domain, (str(seed['domain']),))
-		except StopIteration, e:
-			break #No more seeds
+	for seed in cursor:
+		domain = str(seed['domain'])
+		if not client.dionysus.dnskey.find_one({'domain':domain}):
+			pool.apply_async(scan_domain, (domain,))
 
 	#Waiting for the scan to end
 	pool.close()
