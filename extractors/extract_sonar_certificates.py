@@ -16,7 +16,6 @@ PRINT_STEP = 1000
 
 
 def main():
-
     # Reading the commandline arguments
     if len(sys.argv) != 2:
         print "USAGE: %s <SONAR_CERTIFICATE_DIRECTORY>" % sys.argv[0]
