@@ -44,7 +44,6 @@ def exec_retry_scan(scan_func, dns_resolver, domain, client):
 
 
 def scan_domain(domain):
-
     # After forking, the DB_CLIENT might not be set
     global DB_CLIENT
     if DB_CLIENT is None:
