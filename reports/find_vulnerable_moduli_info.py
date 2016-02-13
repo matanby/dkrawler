@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+
 import sys
 from itertools import izip
 from pymongo import MongoClient

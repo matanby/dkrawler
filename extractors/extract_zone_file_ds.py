@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+
 import sys
 import re
 from pymongo import MongoClient
@@ -33,8 +35,8 @@ def main():
     # In any case, we can just manually parse these lines
     zone_file = open(zone_file_path, 'r')
     domains_added = 0
-    for line in zone_file:
 
+    for line in zone_file:
         # Is this a DS record?
         match = re.match("^(\S+)\s+(\d+\s+)?(IN\s+)?DS\s+.*", line)
         if not match:

@@ -30,8 +30,8 @@ def scan(resolver, domain, client):
     try:
         logging.info(domain)
         rrset = resolver.query(domain, 'DNSKEY')
-        for rr in rrset:
 
+        for rr in rrset:
             # Simplifying some of the raw information in the DNSKEY result
             is_zsk = (rr.flags & 0x100) > 0
             is_ksk = (rr.flags & 0x001) > 0

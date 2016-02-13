@@ -1,13 +1,6 @@
 import time
 
 
-def update_seed(client, domain, is_bad):
-    """
-    Updates the status of the given seed
-    """
-    client.dionysus.seeds.update_one({'domain': domain}, {'$set': {'last_scan': time.time(), 'bad': is_bad}})
-
-
 def insert_seed(client, domain, origin):
     """
     Inserts the given (FQDN) domain as a scanning seed, from the given origin.
@@ -27,3 +20,11 @@ def insert_seed(client, domain, origin):
     })
 
     return True
+
+
+def update_seed(client, domain, is_bad):
+    """
+    Updates the status of the given seed
+    """
+
+    client.dionysus.seeds.update_one({'domain': domain}, {'$set': {'last_scan': time.time(), 'bad': is_bad}})

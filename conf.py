@@ -18,11 +18,11 @@ MAX_TIMEOUTS = 1
 
 
 # The period, in seconds, after which seeds which have already been scanned are re-scanned
-RESCAN_PERIOD = 3 * 24 * 60 * 60 #Three days
+RESCAN_PERIOD = 3 * 24 * 60 * 60  # Three days
 
 
 # The interval, in seconds, at which seeds are polled when the seed database is empty
-SEED_POLL_DELAY = 60 # One minute
+SEED_POLL_DELAY = 60  # One minute
 
 
 # The log level used

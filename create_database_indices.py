@@ -1,3 +1,5 @@
+#! /usr/bin/env python
+
 from pymongo import MongoClient
 import pymongo
 from conf import *
