@@ -17,11 +17,13 @@ THREAD_POOL_SIZE = 256
 MAX_TIMEOUTS = 1
 
 
-# The period, in seconds, after which seeds which have already been scanned are re-scanned
+# The period, in seconds, after which seeds which have
+# already been scanned are re-scanned
 RESCAN_PERIOD = 3 * 24 * 60 * 60  # Three days
 
 
-# The interval, in seconds, at which seeds are polled when the seed database is empty
+# The interval, in seconds, at which seeds are polled
+# when the seed database is empty
 SEED_POLL_DELAY = 60  # One minute
 
 
@@ -39,3 +41,7 @@ LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 
 # The timeout, in seconds, for each query performed
 QUERY_TIMEOUT = 7 
+
+# The upper limit of the number of results that should
+# be returned by the web app in a single query
+WEB_RESULTS_LIMIT = 20
