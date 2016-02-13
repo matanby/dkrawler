@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-
+import gzip
 import sys
 from pymongo import MongoClient
 
@@ -25,7 +25,7 @@ def main():
     # Connecting to the database
     client = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
 
-    dns_file = open(dns_file_path, 'r')
+    dns_file = gzip.open(dns_file_path, 'r')
     domains_added = 0
     for line in dns_file:
 
