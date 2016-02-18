@@ -1,5 +1,3 @@
-#! /usr/bin/env python
-
 import logging
 import time
 
@@ -87,7 +85,7 @@ def scan_domain(domain):
     dal.update_seed(DB_CLIENT, domain, bad_seed)
 
 
-def main():
+def scan_domains():
     configure_logging()
     client = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
 
@@ -120,7 +118,3 @@ def main():
 
     scan_time = time.time() - scan_start_time
     logging.info('Total scan time: %s seconds' % scan_time)
-
-
-if __name__ == "__main__":
-    main()

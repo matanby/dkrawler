@@ -1,4 +1,26 @@
 import time
+import pymongo
+
+import conf
+
+
+def create_database_indices():
+    """
+    Creates indexes on the database collections.
+    """
+
+    client = pymongo.MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
+
+    # Create indices for the seeds collection
+    client.dionysus.seeds.create_index('domain')
+    client.dionysus.seeds.create_index('bad')
+    client.dionysus.seeds.create_index([('time_added', pymongo.ASCENDING)])
+    client.dionysus.seeds.create_index([('last_scan', pymongo.ASCENDING)])
+
+    # Create indices for the dnskey collection
+    client.dionysus.dnskey.create_index('domain')
+    client.dionysus.dnskey.create_index('N')
+    client.dionysus.dnskey.create_index('algorithm')
 
 
 def insert_seed(client, domain, origin):

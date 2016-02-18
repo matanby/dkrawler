@@ -40,7 +40,7 @@ def create_moduli_file(moduli_file_path):
     os.system('mv %s_ %s' % (moduli_file_path, moduli_file_path))
 
 
-def find_duplicate_moduli():
+def duplicate_moduli():
     client = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
     cursor = client.dionysus.dnskey.find({'N': {'$exists': True}})
     n_map = {}
@@ -63,18 +63,18 @@ def find_duplicate_moduli():
                 print entry['domain']
 
 
-def find_vulnerable_moduli_info(vuln_moduli_file_path, gcd_file_path):
+def vulnerable_moduli_info(vuln_moduli_file_path, gcd_file_path):
     client = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
     vuln_moduli_file = open(vuln_moduli_file_path, 'r')
     gcd_file = open(gcd_file_path, 'r')
 
-    for N_line, gcd_line in itertools.izip(vuln_moduli_file, gcd_file):
-        N = N_line.strip()
+    for n_line, gcd_line in itertools.izip(vuln_moduli_file, gcd_file):
+        n = n_line.strip()
         gcd = gcd_line.strip()
-        cursor = client.dionysus.dnskey.find({'N': N})
+        cursor = client.dionysus.dnskey.find({'N': n})
 
         print "---------------------------------------------"
-        print "N: %s" % N
+        print "N: %s" % n
         print "gcd: %s" % gcd
         for entry in cursor:
             print "Domain: %s" % entry['domain']
