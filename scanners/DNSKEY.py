@@ -28,7 +28,7 @@ def scan(resolver, domain, client):
     """
 
     try:
-        logging.info(domain)
+        logging.debug(domain)
         rrset = resolver.query(domain, 'DNSKEY')
 
         for rr in rrset:

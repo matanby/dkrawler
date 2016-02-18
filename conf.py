@@ -9,8 +9,8 @@ DATABASE_SERVER = "localhost"
 DATABASE_PORT = 27017
 
 
-# The number of threads in the scanning thread pool
-THREAD_POOL_SIZE = 256
+# The number of greenlets in the scanning thread pool
+GREENLETS_POOL_SIZE = 1024
 
 
 # The maximal number of consecutive timeouts allowed
@@ -28,7 +28,7 @@ SEED_POLL_DELAY = 60  # One minute
 
 
 # The log level used
-LOG_LEVEL = logging.DEBUG
+LOG_LEVEL = logging.INFO
 
 
 # The log file used

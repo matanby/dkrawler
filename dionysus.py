@@ -1,11 +1,14 @@
 #! /usr/bin/env python
 
+import time
 import logging
+
 import dns
 import dns.resolver
 import dns.exception
 from pymongo import MongoClient
-from multiprocessing import Pool
+import eventlet
+
 import conf
 import scanners
 import dal
@@ -40,7 +43,7 @@ def exec_retry_scan(scan_func, dns_resolver, domain, client):
             return
         except dns.exception.Timeout as e:
             num_timeouts += 1
-            logging.warning('Got %d timeouts when querying %s' % (num_timeouts, domain))
+            logging.debug('Got %d timeouts when querying %s' % (num_timeouts, domain))
             if num_timeouts == conf.MAX_TIMEOUTS:
                 raise
 
@@ -85,8 +88,11 @@ def main():
     configure_logging()
     client = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
 
-    # Creating the thread pool to which the scans are distributed
-    pool = Pool(processes=conf.THREAD_POOL_SIZE)
+    # Monkey patch system libraries to behave be non-blocking.
+    eventlet.monkey_patch()
+
+    # Creating greenlets pool to which the scans are distributed
+    pool = eventlet.GreenPool(conf.GREENLETS_POOL_SIZE)
 
     # Adding a scan task for each seed
     logging.info('Searching for seeds')
@@ -96,16 +102,23 @@ def main():
     #     'bad': False
     # })
 
+    scan_start_time = time.time()
+
     cursor = client.dionysus.seeds.find({'bad': False})
     logging.info('Found %d seeds' % cursor.count())
-    for seed in cursor:
+    domains_to_scan = []
+    for seed in cursor[:5000]:
         domain = str(seed['domain'])
         if not client.dionysus.dnskey.find_one({'domain': domain}):
-            pool.apply_async(scan_domain, (domain,))
+            domains_to_scan.append(domain)
+            pool.spawn(scan_domain, domain)
 
     # Waiting for the scan to end
-    pool.close()
-    pool.join()
+    pool.waitall()
+
+    scan_time = time.time() - scan_start_time
+    logging.info('Total scan time: %s seconds' % scan_time)
+
 
 if __name__ == "__main__":
     main()
