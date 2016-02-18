@@ -107,7 +107,7 @@ def main():
     cursor = client.dionysus.seeds.find({'bad': False})
     logging.info('Found %d seeds' % cursor.count())
     domains_to_scan = []
-    for seed in cursor[:5000]:
+    for seed in cursor:
         domain = str(seed['domain'])
         if not client.dionysus.dnskey.find_one({'domain': domain}):
             domains_to_scan.append(domain)
