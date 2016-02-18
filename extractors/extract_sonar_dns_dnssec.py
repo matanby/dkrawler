@@ -1,11 +1,12 @@
 #! /usr/bin/env python
 import gzip
 import sys
+
 from pymongo import MongoClient
 
 sys.path.insert(0, "..")
 import conf
-import dal
+from core import dal
 
 # The description of the seeds origin in the database
 ORIGIN_DESCRIPTION = "SonarDNS"
