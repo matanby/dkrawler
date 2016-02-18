@@ -97,14 +97,13 @@ def main():
     # Adding a scan task for each seed
     logging.info('Searching for seeds')
 
-    # cursor = client.dionysus.seeds.find({
-    #     'last_scan':{'$lt':time.time() - RESCAN_PERIOD},
-    #     'bad': False
-    # })
-
     scan_start_time = time.time()
 
-    cursor = client.dionysus.seeds.find({'bad': False})
+    cursor = client.dionysus.seeds.find({
+        'last_scan': {'$lt': time.time() - conf.RESCAN_PERIOD},
+        'bad': False
+    })
+
     logging.info('Found %d seeds' % cursor.count())
     domains_to_scan = []
     for seed in cursor:
