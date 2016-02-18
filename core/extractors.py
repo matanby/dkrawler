@@ -4,7 +4,6 @@ import time
 import textwrap
 import gzip
 
-from M2Crypto import X509
 from pymongo import MongoClient
 
 import conf
@@ -28,6 +27,7 @@ def extract_sonar_certificates(sonar_certificate_directory):
             cert = "-----BEGIN CERTIFICATE-----\n{certtext}\n-----END CERTIFICATE-----".format(certtext=cert)
 
             try:
+                from M2Crypto import X509
                 x509 = X509.load_cert_string(cert, X509.FORMAT_PEM)
                 pkey = x509.get_pubkey()
                 cert_obj = {
@@ -40,6 +40,11 @@ def extract_sonar_certificates(sonar_certificate_directory):
                 }
 
                 client.dionysus.sslcerts.insert(cert_obj)
+
+            except ImportError, e:
+                print 'Failed to import M2Crypto. Error: ' % e
+                return
+
             except Exception, e:
                 print 'Failed to parse certificate, skipping'
 
