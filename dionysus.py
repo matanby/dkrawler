@@ -1,5 +1,6 @@
 import click
 import core.dionysus
+import core.extractors
 import core.reports
 import core.dal
 
@@ -34,6 +35,32 @@ def init_db():
     :return:
     """
     core.dal.create_database_indices()
+
+
+@cli.group()
+def extract():
+    """
+    Extract DNS server info and SSL certifications from external files.
+    """
+
+
+@extract.command()
+@click.argument('sonar_certificate_directory')
+def sonar_certificates(sonar_certificate_directory):
+    core.extractors.extract_sonar_certificates(sonar_certificate_directory)
+
+
+@extract.command()
+@click.argument('sonar_dns_file')
+def sonar_dns_dnssec(sonar_dns_file):
+    core.extractors.extract_sonar_dns_dnssec(sonar_dns_file)
+
+
+@extract.command()
+@click.argument('zone_file_path')
+@click.argument('zone_file_origin')
+def zone_file_ds(zone_file_path, zone_file_origin):
+    core.extractors.extract_zone_file_ds(zone_file_path, zone_file_origin)
 
 
 @cli.group()
