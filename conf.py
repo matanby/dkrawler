@@ -27,8 +27,12 @@ RESCAN_PERIOD = 3 * 24 * 60 * 60  # Three days
 SEED_POLL_DELAY = 60  # One minute
 
 
-# The log level used
-LOG_LEVEL = logging.INFO
+# The log level used for the STDOUT stream
+LOG_LEVEL_STDOUT = logging.INFO
+
+
+# The log level used for the file output stream
+LOG_LEVEL_FILE_HANDLER = logging.DEBUG
 
 
 # The log file used

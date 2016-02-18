@@ -22,16 +22,19 @@ def configure_logging():
     Configuring the loggers used
     """
 
-    logger = logging.root
-    logger.setLevel(conf.LOG_LEVEL)
-    fh = logging.FileHandler(conf.LOG_FILE_PATH)
-    fh.setLevel(conf.LOG_LEVEL)
-    ch = logging.StreamHandler()
-    ch.setLevel(conf.LOG_LEVEL)
     formatter = logging.Formatter(conf.LOG_FORMAT)
-    ch.setFormatter(formatter)
+
+    fh = logging.FileHandler(conf.LOG_FILE_PATH)
+    fh.setLevel(conf.LOG_LEVEL_FILE_HANDLER)
     fh.setFormatter(formatter)
-    logger.addHandler(ch)
+
+    sh = logging.StreamHandler()
+    sh.setLevel(conf.LOG_LEVEL_STDOUT)
+    sh.setFormatter(formatter)
+
+    logger = logging.root
+    logger.setLevel(logging.DEBUG)
+    logger.addHandler(sh)
     logger.addHandler(fh)
 
 
