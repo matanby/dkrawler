@@ -1,10 +1,8 @@
-from flask import Flask, jsonify, request
-import sys
 import re
 
+from flask import Flask, jsonify, request
 from pymongo.mongo_client import MongoClient
 
-sys.path.insert(0, "..")
 import conf
 
 
@@ -68,5 +66,5 @@ def server_error(e):
     return jsonify(result), 500
 
 
-if __name__ == '__main__':
+def run_server():
     app.run(debug=False)

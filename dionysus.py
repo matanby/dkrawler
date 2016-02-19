@@ -3,6 +3,7 @@ import core.dionysus
 import core.extractors
 import core.reports
 import core.dal
+import webapp.app
 
 
 @click.group()
@@ -19,6 +20,15 @@ def scan():
     """
 
     core.dionysus.scan_domains()
+
+
+@cli.command()
+def start_server():
+    """
+    Runs the web-server.
+    """
+
+    webapp.app.run_server()
 
 
 @cli.group()
