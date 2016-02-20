@@ -60,7 +60,7 @@ def scan(resolver, domain, client):
                 obj['e'] = rr.key[1:1 + exp_len].encode("hex")
                 obj['N'] = rr.key[1 + exp_len:].encode("hex")
 
-            client.dionysus.dnskey.insert(obj)
+            client.dionysus.dnskey.replace_one({'domain': domain}, obj, upsert=True)
 
     except dns.resolver.NoAnswer, e:
         logging.info('No DNSKEY entry for %s' % domain)

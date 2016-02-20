@@ -1,4 +1,5 @@
 import logging
+import threading
 import time
 
 import dns
@@ -6,6 +7,7 @@ import dns.exception
 import dns.resolver
 import eventlet
 from pymongo import MongoClient
+import schedule
 
 import conf
 import dal
@@ -13,12 +15,49 @@ import scanners
 
 # The shared database client used
 DB_CLIENT = None
+SCHEDULER_THREAD = None
+LOGGER_INITIALIZED = False
+
+
+def init():
+    # Initialize the logger
+    configure_logging()
+
+    # Configure the scan scheduler
+    configure_scan_scheduler()
+
+
+def configure_scan_scheduler():
+    global SCHEDULER_THREAD
+
+    if SCHEDULER_THREAD is not None:
+        return
+
+    # Schedule future scan procedures
+    for hour in conf.DAILY_SCAN_TIMES:
+        schedule.every().day.at(hour).do(scan_domains)
+
+    def scan_scheduler():
+        while True:
+            try:
+                schedule.run_pending()
+                time.sleep(1)
+            except Exception, e:
+                logging.error('Error while running a scheduled scan: ' % e)
+
+    SCHEDULER_THREAD = threading.Thread(target=scan_scheduler)
+    SCHEDULER_THREAD.start()
 
 
 def configure_logging():
     """
     Configuring the loggers used
     """
+
+    global LOGGER_INITIALIZED
+
+    if LOGGER_INITIALIZED:
+        return
 
     formatter = logging.Formatter(conf.LOG_FORMAT)
 
@@ -34,6 +73,8 @@ def configure_logging():
     logger.setLevel(logging.DEBUG)
     logger.addHandler(sh)
     logger.addHandler(fh)
+
+    LOGGER_INITIALIZED = True
 
 
 def exec_retry_scan(scan_func, dns_resolver, domain, client):
@@ -106,15 +147,22 @@ def scan_domains():
     })
 
     logging.info('Found %d seeds' % cursor.count())
-    domains_to_scan = []
+    scan_id = client.dionysus.scans.insert_one({
+        'start_time': time.time(),
+        'end_time': -1,
+        'number_of_domains': len(cursor),
+    }).inserted_id
+
     for seed in cursor:
         domain = str(seed['domain'])
-        if not client.dionysus.dnskey.find_one({'domain': domain}):
-            domains_to_scan.append(domain)
-            pool.spawn(scan_domain, domain)
+        # if not client.dionysus.dnskey.find_one({'domain': domain}):
+        pool.spawn(scan_domain, domain)
 
     # Waiting for the scan to end
     pool.waitall()
 
-    scan_time = time.time() - scan_start_time
+    scan_end_time = time.time()
+    client.dionysus.scans.update_one({'_id': scan_id}, {'$set': {'end_time': scan_end_time}})
+
+    scan_time = scan_end_time - scan_start_time
     logging.info('Total scan time: %s seconds' % scan_time)

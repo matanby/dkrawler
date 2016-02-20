@@ -23,11 +23,12 @@ def scan():
 
 
 @cli.command()
-def start_server():
+def run_server():
     """
     Runs the web-server.
     """
 
+    core.dionysus.init()
     webapp.app.run_server()
 
 
