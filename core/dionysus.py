@@ -59,9 +59,13 @@ def configure_logging():
 
     formatter = logging.Formatter(conf.LOG_FORMAT)
 
-    fh = logging.FileHandler(conf.LOG_FILE_PATH)
-    fh.setLevel(conf.LOG_LEVEL_FILE_HANDLER)
-    fh.setFormatter(formatter)
+    ifh = logging.FileHandler(conf.INFO_LOG_FILE_PATH)
+    ifh.setLevel(conf.LOG_LEVEL_INFO_FILE_HANDLER)
+    ifh.setFormatter(formatter)
+
+    efh = logging.FileHandler(conf.ERROR_LOG_FILE_PATH)
+    efh.setLevel(conf.LOG_LEVEL_ERROR_FILE_HANDLER)
+    efh.setFormatter(formatter)
 
     sh = logging.StreamHandler()
     sh.setLevel(conf.LOG_LEVEL_STDOUT)
@@ -70,7 +74,8 @@ def configure_logging():
     logger = logging.root
     logger.setLevel(logging.DEBUG)
     logger.addHandler(sh)
-    logger.addHandler(fh)
+    logger.addHandler(ifh)
+    logger.addHandler(efh)
 
     LOGGER_INITIALIZED = True
 

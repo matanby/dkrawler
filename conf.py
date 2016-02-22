@@ -35,12 +35,18 @@ SEED_POLL_DELAY = 60  # One minute
 LOG_LEVEL_STDOUT = logging.INFO
 
 
-# The log level used for the file output stream
-LOG_LEVEL_FILE_HANDLER = logging.DEBUG
+# The log level used for the info file output stream
+LOG_LEVEL_INFO_FILE_HANDLER = logging.DEBUG
+
+# The log level used for the error file output stream
+LOG_LEVEL_ERROR_FILE_HANDLER = logging.ERROR
 
 
-# The log file used
-LOG_FILE_PATH = 'dionysus.log'
+# The info log file used
+INFO_LOG_FILE_PATH = 'dionysus.log'
+
+# The error log file used
+ERROR_LOG_FILE_PATH = 'dionysus.err'
 
 
 # The format of the log messages
