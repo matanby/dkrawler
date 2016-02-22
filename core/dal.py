@@ -19,11 +19,11 @@ def create_database_indices():
 
     # Create indices for the dnskey collection
     client.dionysus.dnskey.create_index('domain')
-    client.dionysus.dnskey.create_index('N')
+    client.dionysus.dnskey.create_index([('N', pymongo.HASHED)])
     client.dionysus.dnskey.create_index('algorithm')
 
     # Create indices for the scans collection
-    client.dionysus.scans.create_index(['start_time', pymongo.DESCENDING])
+    client.dionysus.scans.create_index([('start_time', pymongo.DESCENDING)])
 
 
 def insert_seed(client, domain, origin):
