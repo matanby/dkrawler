@@ -23,7 +23,7 @@ RESCAN_PERIOD = 3 * 24 * 60 * 60  # Three days
 
 
 # A list of hours at which a scan will be initiated (daily)
-DAILY_SCAN_TIMES = ['00:00', '12:00']
+DAILY_SCAN_TIMES = ['00:00']
 
 
 # The interval, in seconds, at which seeds are polled
