@@ -13,8 +13,6 @@ import conf
 import dal
 import scanners
 
-# The shared database client used
-DB_CLIENT = None
 SCHEDULER_THREAD = None
 LOGGER_INITIALIZED = False
 
@@ -90,12 +88,7 @@ def exec_retry_scan(scan_func, dns_resolver, domain, client):
                 raise
 
 
-def scan_domain(domain):
-    # After forking, the DB_CLIENT might not be set
-    global DB_CLIENT
-    if DB_CLIENT is None:
-        DB_CLIENT = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
-
+def scan_domain(client, domain):
     dns_resolver = dns.resolver.Resolver()
     dns_resolver.use_edns(0, 0, 4096)
     dns_resolver.timeout = conf.QUERY_TIMEOUT
@@ -103,7 +96,7 @@ def scan_domain(domain):
     bad_seed = False
     for scan_func in scanners.scan_functions:
         try:
-            exec_retry_scan(scan_func, dns_resolver, domain, DB_CLIENT)
+            exec_retry_scan(scan_func, dns_resolver, domain, client)
         except dns.resolver.NXDOMAIN as e:
             logging.warning('Got NXDomain when trying to scan %s, marking bad seed' % domain)
             bad_seed = True
@@ -123,7 +116,7 @@ def scan_domain(domain):
         except Exception, ex:
             logging.exception('Unexpected exception when querying %s' % domain)
 
-    dal.update_seed(DB_CLIENT, domain, bad_seed)
+    dal.update_seed(client, domain, bad_seed)
 
 
 def scan_domains():
@@ -150,13 +143,13 @@ def scan_domains():
     scan_id = client.dionysus.scans.insert_one({
         'start_time': time.time(),
         'end_time': -1,
-        'number_of_domains': len(cursor),
+        'number_of_domains': cursor.count(),
     }).inserted_id
 
     for seed in cursor:
         domain = str(seed['domain'])
         # if not client.dionysus.dnskey.find_one({'domain': domain}):
-        pool.spawn(scan_domain, domain)
+        pool.spawn(scan_domain, client, domain)
 
     # Waiting for the scan to end
     pool.waitall()
