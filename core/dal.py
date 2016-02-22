@@ -53,3 +53,11 @@ def update_seed(client, domain, is_bad):
     """
 
     client.dionysus.seeds.update_one({'domain': domain}, {'$set': {'last_scan': time.time(), 'bad': is_bad}})
+
+
+def reset_seeds_status(client):
+    """
+    Resets the status of all seeds to initial values (bad: False, last_scan: 0)
+    """
+
+    print client.dionysus.seeds.update_many({}, {'$set': {'bad': False, 'last_scan': 0}})

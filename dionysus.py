@@ -1,6 +1,8 @@
 #! /usr/bin/env python
 
 import click
+import pymongo
+
 import core.dionysus
 import core.extractors
 import core.reports
@@ -45,9 +47,18 @@ def manage():
 def init_db():
     """
     Initialises the database.
-    :return:
     """
+
     core.dal.create_database_indices()
+
+
+@manage.command()
+def reset_seeds_status():
+    """
+    Resets the status of all seeds to initial values (bad: False, last_scan: 0)
+    """
+
+    core.dal.reset_seeds_status(pymongo.MongoClient())
 
 
 @cli.group()
