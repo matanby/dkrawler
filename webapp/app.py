@@ -46,6 +46,36 @@ def dnskey():
     return jsonify(result), 200
 
 
+@app.route('/scans_history', methods=['GET'])
+def scans_history():
+    page = int(request.args.get('page', default=0))
+    results_start_idx = page * conf.WEB_RESULTS_LIMIT
+    results_end_idx = (page + 1) * conf.WEB_RESULTS_LIMIT
+    dnskeys = list(db.dionysus.scans.find({}, {'_id': 0})[results_start_idx:results_end_idx])
+    result = {
+        'success': True,
+        'code': 200,
+        'status': 'Operation succeeded',
+        'data': dnskeys,
+    }
+    return jsonify(result), 200
+
+
+@app.route('/status', methods=['GET'])
+def status():
+    result = {
+        'success': True,
+        'code': 200,
+        'status': 'Operation succeeded',
+        'data': {
+            'seeds_count': db.dionysus.seeds.count(),
+            'dnskey_count': db.dionysus.dnskey.count(),
+            'daily_scan_times': conf.DAILY_SCAN_TIMES,
+        },
+    }
+    return jsonify(result), 200
+
+
 @app.errorhandler(404)
 def not_found(e):
     result = {
