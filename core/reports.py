@@ -1,3 +1,4 @@
+import time
 from pymongo import MongoClient
 import os
 import itertools
@@ -14,6 +15,7 @@ def key_lengths():
     for entry in cursor:
         if 'N' not in entry:
             continue
+
         n_len = len(entry['N'])
         if n_len not in n_lengths:
             n_lengths[n_len] = 1
@@ -23,6 +25,43 @@ def key_lengths():
     # Printing the actual key length histogram, sorted
     for length in sorted(n_lengths.keys()):
         print "%d bits : %d" % (length * 4, n_lengths[length])
+
+    client.dionysus.key_lengths.insert_one({
+        'creation_time': time.time(),
+        'n_lengths': {str(k): 4 * v for k, v in n_lengths.iteritems()}
+    })
+
+
+def duplicate_moduli():
+    client = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
+    cursor = client.dionysus.dnskey.find({'N': {'$exists': True}})
+    n_map = {}
+
+    for entry in cursor:
+        n = entry['N']
+        if n not in n_map:
+            n_map[n] = 1
+        else:
+            n_map[n] += 1
+
+    duplicates = {}
+
+    for n in n_map:
+        if n_map[n] > 1:
+            print "---------------------------------------------"
+            print "Duplicate modulus!"
+            print n
+            print "Found in:"
+            duplicates[n] = []
+            cursor = client.dionysus.dnskey.find({'N': n})
+            for entry in cursor:
+                print entry['domain']
+                duplicates[n].append(entry['domain'])
+
+    client.dionysus.duplicate_moduli.insert_one({
+        'creation_time': time.time(),
+        'duplicates': duplicates,
+    })
 
 
 def create_moduli_file(moduli_file_path):
@@ -38,29 +77,6 @@ def create_moduli_file(moduli_file_path):
     os.system('cat %s | sort | uniq > %s_' % (moduli_file_path, moduli_file_path))
     os.system('rm %s' % moduli_file_path)
     os.system('mv %s_ %s' % (moduli_file_path, moduli_file_path))
-
-
-def duplicate_moduli():
-    client = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
-    cursor = client.dionysus.dnskey.find({'N': {'$exists': True}})
-    n_map = {}
-
-    for entry in cursor:
-        n = entry['N']
-        if n not in n_map:
-            n_map[n] = 1
-        else:
-            n_map[n] += 1
-
-    for n in n_map:
-        if n_map[n] > 1:
-            print "---------------------------------------------"
-            print "Duplicate modulus!"
-            print n
-            print "Found in:"
-            cursor = client.dionysus.dnskey.find({'N': n})
-            for entry in cursor:
-                print entry['domain']
 
 
 def vulnerable_moduli_info(vuln_moduli_file_path, gcd_file_path):
@@ -81,4 +97,3 @@ def vulnerable_moduli_info(vuln_moduli_file_path, gcd_file_path):
 
     vuln_moduli_file.close()
     gcd_file.close()
-
