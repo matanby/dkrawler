@@ -2,9 +2,8 @@ import time
 from pymongo import MongoClient
 import os
 import itertools
-
 import conf
-
+import subprocess
 
 def key_lengths():
     client = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
@@ -64,9 +63,11 @@ def duplicate_moduli():
     })
 
 
-def create_moduli_file(moduli_file_path):
+def factorable_moduli():
+    
+    #Creating the moduli file
     client = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
-    moduli_file = open(moduli_file_path, 'w')
+    moduli_file = open(FASTGCD_INPUT_FILE_PATH, 'w')
     cursor = client.dionysus.dnskey.find({'N': {'$exists': True}})
     for entry in cursor:
         moduli_file.write(entry['N'])
@@ -74,26 +75,34 @@ def create_moduli_file(moduli_file_path):
     moduli_file.close()
 
     # After the file is created, filter it through sort-uniq
-    os.system('cat %s | sort | uniq > %s_' % (moduli_file_path, moduli_file_path))
-    os.system('rm %s' % moduli_file_path)
-    os.system('mv %s_ %s' % (moduli_file_path, moduli_file_path))
+    os.system('cat %s | sort | uniq > %s_' % (FASTGCD_INPUT_FILE_PATH, FASTGCD_INPUT_FILE_PATH))
+    os.system('rm %s' % FASTGCD_INPUT_FILE_PATH)
+    os.system('mv %s_ %s' % (FASTGCD_INPUT_FILE_PATH, FASTGCD_INPUT_FILE_PATH))
 
+    # Executing fastgcd and waiting for it to complete
+    proc = subprocess.Popen([FASTGCD_DIR + 'fastgcd', FASTGCD_INPUT_FILE_PATH])
+    proc.wait()
 
-def vulnerable_moduli_info(vuln_moduli_file_path, gcd_file_path):
-    client = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
-    vuln_moduli_file = open(vuln_moduli_file_path, 'r')
-    gcd_file = open(gcd_file_path, 'r')
+    # Now that the process has completed, read the moduli and GCDs from the result files,
+    # and insert them into the database
+    vuln_moduli_file = open(FASTGCD_OUTPUT_FILE_PATH, 'r')
+    gcd_file = open(FASTGCD_GCD_FILE_PATH, 'r')
 
     for n_line, gcd_line in itertools.izip(vuln_moduli_file, gcd_file):
         n = n_line.strip()
         gcd = gcd_line.strip()
         cursor = client.dionysus.dnskey.find({'N': n})
-
-        print "---------------------------------------------"
-        print "N: %s" % n
-        print "gcd: %s" % gcd
+    
+        # Collecting the affected domains
+        domains = []
         for entry in cursor:
-            print "Domain: %s" % entry['domain']
+            domains.append(entry['domain'])
+        client.dionysus.factorable_moduli.insert_one({
+            'creation_time': time.time(),
+            'n': n,
+            'gcd': gcd,
+            'domains': domains,
+        })
 
     vuln_moduli_file.close()
     gcd_file.close()

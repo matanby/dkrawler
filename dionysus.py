@@ -109,6 +109,9 @@ def create_moduli_file(moduli_file_path):
 def duplicate_moduli():
     core.reports.duplicate_moduli()
 
+@reports.command()
+def factorable_moduli():
+    core.reports.factorable_moduli()
 
 @reports.command()
 @click.argument('vuln_moduli_file_path')
