@@ -31,6 +31,9 @@ def create_database_indices():
     # Create indices for the duplicate_moduli collection
     client.dionysus.duplicate_moduli.create_index([('creation_time', pymongo.DESCENDING)])
 
+    # Create indices for the factorable_moduli collection
+    client.dionysus.factorable_moduli.create_index([('creation_time', pymongo.DESCENDING)])
+
 
 def insert_seed(client, domain, origin):
     """
