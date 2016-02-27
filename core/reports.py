@@ -5,6 +5,7 @@ import itertools
 import conf
 import subprocess
 
+
 def key_lengths():
     client = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
     cursor = client.dionysus.dnskey.find()
@@ -64,10 +65,9 @@ def duplicate_moduli():
 
 
 def factorable_moduli():
-    
-    #Creating the moduli file
+    # Creating the moduli file
     client = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
-    moduli_file = open(FASTGCD_INPUT_FILE_PATH, 'w')
+    moduli_file = open(conf.FASTGCD_INPUT_FILE_PATH, 'w')
     cursor = client.dionysus.dnskey.find({'N': {'$exists': True}})
     for entry in cursor:
         moduli_file.write(entry['N'])
@@ -75,18 +75,18 @@ def factorable_moduli():
     moduli_file.close()
 
     # After the file is created, filter it through sort-uniq
-    os.system('cat %s | sort | uniq > %s_' % (FASTGCD_INPUT_FILE_PATH, FASTGCD_INPUT_FILE_PATH))
-    os.system('rm %s' % FASTGCD_INPUT_FILE_PATH)
-    os.system('mv %s_ %s' % (FASTGCD_INPUT_FILE_PATH, FASTGCD_INPUT_FILE_PATH))
+    os.system('cat %s | sort | uniq > %s_' % (conf.FASTGCD_INPUT_FILE_PATH, conf.FASTGCD_INPUT_FILE_PATH))
+    os.system('rm %s' % conf.FASTGCD_INPUT_FILE_PATH)
+    os.system('mv %s_ %s' % (conf.FASTGCD_INPUT_FILE_PATH, conf.FASTGCD_INPUT_FILE_PATH))
 
     # Executing fastgcd and waiting for it to complete
-    proc = subprocess.Popen([FASTGCD_DIR + 'fastgcd', FASTGCD_INPUT_FILE_PATH])
+    proc = subprocess.Popen([conf.FASTGCD_DIR + 'fastgcd', conf.FASTGCD_INPUT_FILE_PATH])
     proc.wait()
 
     # Now that the process has completed, read the moduli and GCDs from the result files,
     # and insert them into the database
-    vuln_moduli_file = open(FASTGCD_OUTPUT_FILE_PATH, 'r')
-    gcd_file = open(FASTGCD_GCD_FILE_PATH, 'r')
+    vuln_moduli_file = open(conf.FASTGCD_OUTPUT_FILE_PATH, 'r')
+    gcd_file = open(conf.FASTGCD_GCD_FILE_PATH, 'r')
 
     for n_line, gcd_line in itertools.izip(vuln_moduli_file, gcd_file):
         n = n_line.strip()
@@ -97,6 +97,7 @@ def factorable_moduli():
         domains = []
         for entry in cursor:
             domains.append(entry['domain'])
+
         client.dionysus.factorable_moduli.insert_one({
             'creation_time': time.time(),
             'n': n,
