@@ -106,3 +106,7 @@ crashlytics.properties
 crashlytics-build.properties
 
 # Created by .ignore support plugin (hsz.mobi)
+
+# Dionysus log files
+dionysus.err
+dionysus.log
