@@ -71,12 +71,20 @@ def extract():
 @extract.command()
 @click.argument('sonar_certificate_directory')
 def sonar_certificates(sonar_certificate_directory):
+    """
+    Extract cryptographic data from Rapid7 Sonar SSL scan reports.
+    """
+
     core.extractors.extract_sonar_certificates(sonar_certificate_directory)
 
 
 @extract.command()
 @click.argument('sonar_dns_file')
 def sonar_dns_dnssec(sonar_dns_file):
+    """
+    Extract cryptographic data from Rapid7 Sonar DNS scan reports.
+    """
+
     core.extractors.extract_sonar_dns_dnssec(sonar_dns_file)
 
 
@@ -84,6 +92,10 @@ def sonar_dns_dnssec(sonar_dns_file):
 @click.argument('zone_file_path')
 @click.argument('zone_file_origin')
 def zone_file_ds(zone_file_path, zone_file_origin):
+    """
+    Extract DNS servers info from zone files.
+    """
+
     core.extractors.extract_zone_file_ds(zone_file_path, zone_file_origin)
 
 
@@ -96,16 +108,28 @@ def reports():
 
 @reports.command()
 def key_lengths():
+    """
+    Generate DNS key lengths report.
+    """
+
     core.reports.key_lengths()
 
 
 @reports.command()
 def duplicate_moduli():
+    """
+    Generate duplicate DNS key moduli report.
+    """
+
     core.reports.duplicate_moduli()
 
 
 @reports.command()
 def factorable_moduli():
+    """
+    Generate factorable DNS key moduli report.
+    """
+
     core.reports.factorable_moduli()
 
 
