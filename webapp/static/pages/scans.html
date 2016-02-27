@@ -1,0 +1,16 @@
+<table class="table table-striped">
+    <thread>
+        <tr>
+            <th>Start Time</th>
+            <th>Number of Domains</th>
+            <th>End Time</th>
+        </tr>
+    </thread>
+
+    <tr ng-repeat="scan in scans">
+        <td>{{ scan.start_time * 1000 | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+        <td>{{ scan.number_of_domains }}</td>
+        <td ng-if="scan.end_time != -1">{{ seed.end_time * 1000 | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+        <td ng-if="scan.end_time == -1">On-going</td>
+    </tr>
+</table>

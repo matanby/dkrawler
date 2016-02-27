@@ -1,5 +1,6 @@
 import re
 
+import pymongo
 from flask import Flask, jsonify, request
 from pymongo.mongo_client import MongoClient
 
@@ -34,9 +35,10 @@ def seeds():
 @app.route('/dnskey', methods=['GET'])
 def dnskey():
     page = int(request.args.get('page', default=0))
+    filter = re.escape(request.args.get('filter', default=''))
     results_start_idx = page * conf.WEB_RESULTS_LIMIT
     results_end_idx = (page + 1) * conf.WEB_RESULTS_LIMIT
-    dnskeys = list(db.dionysus.dnskey.find({}, {'_id': 0})[results_start_idx:results_end_idx])
+    dnskeys = list(db.dionysus.dnskey.find({'domain': {'$regex': filter}}, {'_id': 0})[results_start_idx:results_end_idx])
     result = {
         'success': True,
         'code': 200,
@@ -63,6 +65,7 @@ def scans_history():
 
 @app.route('/status', methods=['GET'])
 def status():
+    last_scan = db.dionysus.scans.find_one({}, {'_id': 0}, sort=[('start_time', pymongo.DESCENDING)])
     result = {
         'success': True,
         'code': 200,
@@ -70,7 +73,9 @@ def status():
         'data': {
             'seeds_count': db.dionysus.seeds.count(),
             'dnskey_count': db.dionysus.dnskey.count(),
+            'last_scan_info': last_scan,
             'daily_scan_times': conf.DAILY_SCAN_TIMES,
+            'rescan_period': conf.RESCAN_PERIOD
         },
     }
     return jsonify(result), 200
