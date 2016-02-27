@@ -12,6 +12,7 @@ import schedule
 import conf
 import dal
 import scanners
+from core import reports
 
 SCHEDULER_THREAD = None
 LOGGER_INITIALIZED = False
@@ -22,10 +23,10 @@ def init():
     configure_logging()
 
     # Configure the scan scheduler
-    configure_scan_scheduler()
+    configure_scheduler()
 
 
-def configure_scan_scheduler():
+def configure_scheduler():
     global SCHEDULER_THREAD
 
     if SCHEDULER_THREAD is not None:
@@ -34,6 +35,7 @@ def configure_scan_scheduler():
     # Schedule future scan procedures
     for hour in conf.DAILY_SCAN_TIMES:
         schedule.every().day.at(hour).do(scan_domains)
+        schedule.every().day.at(hour).do(generate_reports)
 
     def scan_scheduler():
         while True:
@@ -164,3 +166,9 @@ def scan_domains():
 
     scan_time = scan_end_time - scan_start_time
     logging.info('Total scan time: %s seconds' % scan_time)
+
+
+def generate_reports():
+    reports.key_lengths()
+    reports.duplicate_moduli()
+    reports.factorable_moduli()
