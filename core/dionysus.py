@@ -43,7 +43,7 @@ def configure_scheduler():
                 schedule.run_pending()
                 time.sleep(1)
             except Exception, e:
-                logging.error('Error while running a scheduled scan: ' % e)
+                logging.error('Error while running a scheduled scan: %s' % e)
 
     SCHEDULER_THREAD = threading.Thread(target=scan_scheduler)
     SCHEDULER_THREAD.start()
