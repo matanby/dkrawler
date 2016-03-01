@@ -32,6 +32,10 @@ def scan(resolver, domain, client):
         rrset = resolver.query(domain, 'DNSKEY')
 
         for rr in rrset:
+            if not hasattr(rr, 'flags'):
+                logging.warning('No `flags` attribute found in the RR record of domain %s' % domain)
+                continue
+
             # Simplifying some of the raw information in the DNSKEY result
             is_zsk = (rr.flags & 0x100) > 0
             is_ksk = (rr.flags & 0x001) > 0
