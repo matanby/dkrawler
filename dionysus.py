@@ -20,7 +20,7 @@ def cli():
 @cli.command()
 def scan():
     """
-    Starts scanning.
+    Start a new scan.
     """
 
     core.dionysus.scan_domains()
@@ -29,7 +29,7 @@ def scan():
 @cli.command()
 def run_server():
     """
-    Runs the web-server.
+    Run the web-server and scans scheduler.
     """
 
     core.dionysus.init()
@@ -44,9 +44,9 @@ def manage():
 
 
 @manage.command()
-def init_db():
+def create_db_indices():
     """
-    Initialises the database.
+    Create DB indices.
     """
 
     core.dal.create_database_indices()
@@ -55,7 +55,7 @@ def init_db():
 @manage.command()
 def reset_seeds_status():
     """
-    Resets the status of all seeds to initial values (bad: False, last_scan: 0)
+    Reset the status of all seeds to initial values (bad: False, last_scan: 0)
     """
 
     core.dal.reset_seeds_status(pymongo.MongoClient())
@@ -73,6 +73,7 @@ def extract():
 def sonar_certificates(sonar_certificate_directory):
     """
     Extract cryptographic data from Rapid7 Sonar SSL scan reports.
+    :param sonar_certificate_directory: The path containing Rapid7 certificates.
     """
 
     core.extractors.extract_sonar_certificates(sonar_certificate_directory)
@@ -83,6 +84,7 @@ def sonar_certificates(sonar_certificate_directory):
 def sonar_dns_dnssec(sonar_dns_file):
     """
     Extract cryptographic data from Rapid7 Sonar DNS scan reports.
+    :param sonar_dns_file: The path of Rapid7's DNS scan report.
     """
 
     core.extractors.extract_sonar_dns_dnssec(sonar_dns_file)
@@ -94,6 +96,8 @@ def sonar_dns_dnssec(sonar_dns_file):
 def zone_file_ds(zone_file_path, zone_file_origin):
     """
     Extract DNS servers info from zone files.
+    :param zone_file_path: The zone file's path.
+    :param zone_file_origin: The zone file's origin.
     """
 
     core.extractors.extract_zone_file_ds(zone_file_path, zone_file_origin)
