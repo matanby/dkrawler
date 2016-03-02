@@ -70,24 +70,24 @@ def extract():
 
 @extract.command()
 @click.argument('sonar_certificate_directory')
-def sonar_certificates(sonar_certificate_directory):
+def sonar_ssl_certificates(sonar_certificates_directory):
     """
     Extract cryptographic data from Rapid7 Sonar SSL scan reports.
-    :param sonar_certificate_directory: The path containing Rapid7 certificates.
+    :param sonar_certificates_directory: The path containing Rapid7 certificates.
     """
 
-    core.extractors.extract_sonar_certificates(sonar_certificate_directory)
+    core.extractors.extract_sonar_ssl_certificates(sonar_certificates_directory)
 
 
 @extract.command()
 @click.argument('sonar_dns_file')
-def sonar_dns_dnssec(sonar_dns_file):
+def sonar_dns(sonar_dns_file):
     """
     Extract cryptographic data from Rapid7 Sonar DNS scan reports.
     :param sonar_dns_file: The path of Rapid7's DNS scan report.
     """
 
-    core.extractors.extract_sonar_dns_dnssec(sonar_dns_file)
+    core.extractors.extract_sonar_dns(sonar_dns_file)
 
 
 @extract.command()

@@ -14,7 +14,7 @@ from core import dal
 PRINT_STEP = 1000
 
 
-def extract_sonar_certificates(sonar_certificate_directory):
+def extract_sonar_ssl_certificates(sonar_certificate_directory):
     # Connecting to the database
     client = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
 
@@ -51,7 +51,7 @@ def extract_sonar_certificates(sonar_certificate_directory):
         cert_file.close()
 
 
-def extract_sonar_dns_dnssec(sonar_dns_file):
+def extract_sonar_dns(sonar_dns_file):
     # Connecting to the database
     client = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
 
