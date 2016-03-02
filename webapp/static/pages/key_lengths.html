@@ -1,0 +1,23 @@
+<div class="row">
+    <div class="col-md-3 col-md-offset-4">
+
+        <div class="well well-sm">
+            <b>Report creation time: </b> {{creation_time * 1000 | date:'yyyy-MM-dd HH:mm:ss' }}
+        </div>
+
+        <table class="table table-striped">
+            <thread>
+                <tr>
+                    <th>N Length</th>
+                    <th>Total Count</th>
+                </tr>
+            </thread>
+
+            <tr ng-repeat="(length, count) in n_lengths">
+                <td>{{ length | number}}</td>
+                <td>{{ count | number }}</td>
+            </tr>
+        </table>
+
+    </div>
+</div>

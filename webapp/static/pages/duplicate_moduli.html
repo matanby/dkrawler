@@ -1,0 +1,59 @@
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+
+        <div class="well well-sm">
+            <b>Report creation time: </b> {{creation_time * 1000 | date:'yyyy-MM-dd HH:mm:ss' }}
+        </div>
+
+        <table class="table table-striped">
+            <thread>
+                <tr>
+                    <th>N</th>
+                    <th>Domains</th>
+                </tr>
+            </thread>
+
+            <tr ng-repeat="(N, domains) in duplicates">
+                <td>{{ N | cut:false:100:'...'}}</td>
+                <td><a style='cursor: pointer;' ng-click="selectN(N, domains)" data-toggle="modal" data-target="#myModal">{{ domains.length }}</a></td>
+            </tr>
+        </table>
+
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Factorable Moduli Information</h4>
+            </div>
+            <div class="modal-body">
+
+                <div class="well well-sm">
+                    <b>N: </b> <div style="word-wrap: break-word;"> {{ selectedN }} </div>
+                </div>
+
+                <table class="table table-striped">
+                    <thread>
+                        <tr>
+                            <th>Domains:</th>
+                        </tr>
+                    </thread>
+                    <tr ng-repeat="domain in selectedDomains">
+                        <td>{{ domain }}</td>
+                    </tr>
+                </table>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>

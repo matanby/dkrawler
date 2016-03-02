@@ -1,23 +1,28 @@
-<div class="well well-sm">
-    Filter: <input ng-model="searchCriteria" ng-change="fetchSeeds()">
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+
+        <div class="well well-sm">
+            <b>Filter:</b> <input ng-model="searchCriteria" ng-change="fetchSeeds()">
+        </div>
+
+        <table class="table table-striped">
+            <tr>
+                <th>Origin</th>
+                <th>Domain</th>
+                <th>Is Bad?</th>
+                <th>Time Added</th>
+                <th>Last Scan Time</th>
+            </tr>
+
+            <tr ng-repeat="seed in seeds">
+                <td>{{ seed.origin }}</td>
+                <td>{{ seed.domain }}</td>
+                <td>{{ seed.bad }}</td>
+                <td>{{ seed.time_added * 1000 | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+                <td ng-if="seed.last_scan">{{ seed.last_scan * 1000 | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+                <td ng-if="!seed.last_scan">Not Scanned Yet</td>
+            </tr>
+        </table>
+
+    </div>
 </div>
-
-<table class="table table-striped">
-    <tr>
-        <th>Origin</th>
-        <th>Domain</th>
-        <th>Is Bad?</th>
-        <th>Time Added</th>
-        <th>Last Scan Time</th>
-    </tr>
-
-    <tr ng-repeat="seed in seeds">
-        <td>{{ seed.origin }}</td>
-        <td>{{ seed.domain }}</td>
-        <td>{{ seed.bad }}</td>
-        <td>{{ seed.time_added * 1000 | date:'yyyy-MM-dd HH:mm:ss' }}</td>
-        <td ng-if="seed.last_scan">{{ seed.last_scan * 1000 | date:'yyyy-MM-dd HH:mm:ss' }}</td>
-        <td ng-if="!seed.last_scan">Not Scanned Yet</td>
-    </tr>
-</table>
-

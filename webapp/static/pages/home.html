@@ -1,3 +1,38 @@
-<div class="jumbotron text-center">
-	<h1>Home Page</h1>
+<div class="row">
+	<div class="col-md-6 col-md-offset-3">
+		<h3>Settings:</h3>
+		<table class="table table">
+			<tr>
+				<td>Seeds Count:</td>
+				<td>{{ status.seeds_count | number }}</td>
+			</tr>
+
+			<tr>
+				<td>DNSKey count:</td>
+				<td>{{ status.dnskey_count | number }}</td>
+			</tr>
+
+			<tr>
+				<td>Daily Scan Times:</td>
+				<td>{{ status.daily_scan_times }}</td>
+			</tr>
+
+			<tr>
+				<td>Rescan Period (Seconds):</td>
+				<td>{{ status.rescan_period | number }}</td>
+			</tr>
+
+			<tr>
+				<td>Last Scan Info:</td>
+				<td>
+					<div>Start Time: {{ status.last_scan_info.start_time * 1000 | date:'yyyy-MM-dd HH:mm:ss' }}</div>
+					<div ng-if="status.last_scan_info.end_time != -1">End Time: {{ status.last_scan_info.end_time * 1000 | date:'yyyy-MM-dd HH:mm:ss' }}</div>
+					<div ng-if="status.last_scan_info.end_time == -1">End Time: On-going</div>
+					<div>Total Domains: {{ status.last_scan_info.number_of_domains | number }}</div>
+				</td>
+			</tr>
+
+		</table>
+
+	</div>
 </div>

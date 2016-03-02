@@ -1,37 +1,43 @@
-<div class="well well-sm">
-    Filter: <input ng-model="searchCriteria" ng-change="fetchDNSKeys()">
+<div class="row">
+    <div class="col-md-10 col-md-offset-1">
+
+        <div class="well well-sm">
+            <b>Filter:</b> <input ng-model="searchCriteria" ng-change="fetchDNSKeys()">
+        </div>
+
+        <table class="table table-striped">
+            <thread>
+                <tr>
+                    <th>Domain</th>
+                    <th>Algorithm</th>
+                    <th>e</th>
+                    <th>Flags</th>
+                    <th>Is KSK?</th>
+                    <th>Is Revoked?</th>
+                    <th>Is ZSK?</th>
+                    <th>Protocol</th>
+                    <th>TTL</th>
+                    <th>N</th>
+                    <th>Key</th>
+                    <th>Time Added</th>
+                </tr>
+            </thread>
+
+            <tr ng-repeat="dnskey in dnskeys">
+                <td>{{ dnskey.domain }}</td>
+                <td>{{ dnskey.algorithm_name }}</td>
+                <td>{{ dnskey.e }}</td>
+                <td>{{ dnskey.flags }}</td>
+                <td>{{ dnskey.is_ksk }}</td>
+                <td>{{ dnskey.is_revoked }}</td>
+                <td>{{ dnskey.is_zsk }}</td>
+                <td>{{ dnskey.protocol }}</td>
+                <td>{{ dnskey.ttl }}</td>
+                <td>{{ dnskey.N | cut:false:20:'...'}}</td>
+                <td>{{ dnskey.key | cut:false:20:'...' }}</td>
+                <td>{{ dnskey.time_added * 1000 | date:'yyyy-MM-dd HH:mm:ss' }}</td>
+            </tr>
+        </table>
+
+    </div>
 </div>
-
-<table class="table table-striped">
-    <thread>
-        <tr>
-            <th>Domain</th>
-            <th>Algorithm</th>
-            <th>e</th>
-            <th>Flags</th>
-            <th>Is KSK?</th>
-            <th>Is Revoked?</th>
-            <th>Is ZSK?</th>
-            <th>Protocol</th>
-            <th>Time Added</th>
-            <th>TTL</th>
-            <th>N</th>
-            <th>Key</th>
-        </tr>
-    </thread>
-
-    <tr ng-repeat="dnskey in dnskeys">
-        <td>{{ dnskey.domain }}</td>
-        <td>{{ dnskey.algorithm_name }}</td>
-        <td>{{ dnskey.e }}</td>
-        <td>{{ dnskey.flags }}</td>
-        <td>{{ dnskey.is_ksk }}</td>
-        <td>{{ dnskey.is_revoked }}</td>
-        <td>{{ dnskey.is_zsk }}</td>
-        <td>{{ dnskey.protocol }}</td>
-        <td>{{ dnskey.time_added * 1000 | date:'yyyy-MM-dd HH:mm:ss' }}</td>
-        <td>{{ dnskey.ttl }}</td>
-        <td>{{ dnskey.N }}</td>
-        <td>{{ dnskey.key }}</td>
-    </tr>
-</table>

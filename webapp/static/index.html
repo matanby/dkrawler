@@ -9,43 +9,44 @@
   <link rel="stylesheet" href="static/css/font-awesome.min.css" />
 
   <!-- SPELLS -->
+  <script src="static/js/jquery.js"></script>
   <script src="static/js/angular.min.js"></script>
   <script src="static/js/angular-route.js"></script>
-  <script src="static/js/jquery.js"></script>
+  <script src="static/js/bootstrap.min.js"></script>
   <script src="static/js/script.js"></script>
 </head>
 
 <!-- define angular controller -->
 <body ng-controller="mainController">
 
-  <nav class="navbar navbar-inverse">
-    <div class="container">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="/"><i class="fa fa-fort-awesome"></i> Dionysus DNSSec Scanner</a>
-      </div>
-
-      <ul class="nav navbar-nav navbar-right">
-        <li><a href="#"><i class="fa fa-home"></i> Home</a></li>
-        <li><a href="#seeds"> <i class="fa fa-database"></i> Seeds</a></li>
-        <li><a href="#dnskeys"> <i class="fa fa-database"></i> DNS Keys</a></li>
-        <li><a href="#scans"> <i class="fa fa-calendar-check-o"></i> Scan History</a></li>
-        <li><a href="#about"><i class="fa fa-shield"></i> About</a></li>
-        <li><a href="#contact"><i class="fa fa-comment"></i> Contact</a></li>
-      </ul>
-    </div>
-  </nav>
-
-  <div id="main">
-
-    <!-- angular templating -->
-    <!-- this is where content will be injected -->
-    <div ng-view></div>
-
+<nav class="navbar navbar-inverse">
+  <div class="navbar-header"><a class="navbar-brand" href="/"><i class="fa fa-eye"></i> Dionysus DNSSec Scanner</a></div>
+  <div class="container">
+    <ul class="nav navbar-nav navbar-right">
+      <li><a href="#"><i class="fa fa-home"></i> Home</a></li>
+      <li><a href="#seeds"> <i class="fa fa-database"></i> Seeds</a></li>
+      <li><a href="#dnskeys"> <i class="fa fa-database"></i> DNS Keys</a></li>
+      <li><a href="#scans"> <i class="fa fa-calendar-check-o"></i> Scan History</a></li>
+      <li><a href="#key_lengths"> <i class="fa fa-key"></i> Key Lengths Report</a></li>
+      <li><a href="#duplicate_moduli"> <i class="fa fa-clone"></i> Duplicate Moduli Report</a></li>
+      <li><a href="#factorable_moduli"> <i class="fa fa-unlock-alt"></i> Factorable Moduli Report</a></li>
+      <li><a href="#about"><i class="fa fa-shield"></i> About</a></li>
+    </ul>
   </div>
+</nav>
 
-  <footer class="text-center">
-    <p>View the source code on <a href="https://github.com/matanby/dionysus">GitHub.com</a></p>
-  </footer>
+
+<div id="main">
+
+  <!-- angular templating -->
+  <!-- this is where content will be injected -->
+  <div ng-view></div>
+
+</div>
+
+<footer class="text-center">
+  <p>View the source code on <a href="https://github.com/matanby/dionysus">GitHub.com</a></p>
+</footer>
 
 </body>
 

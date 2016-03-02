@@ -81,6 +81,42 @@ def status():
     return jsonify(result), 200
 
 
+@app.route('/reports/key_lengths', methods=['GET'])
+def key_lengths_report():
+    key_lengths = db.dionysus.key_lengths.find_one({}, {'_id': 0}, sort=[('creation_time', pymongo.DESCENDING)])
+    result = {
+        'success': True,
+        'code': 200,
+        'status': 'Operation succeeded',
+        'data': key_lengths,
+    }
+    return jsonify(result), 200
+
+
+@app.route('/reports/duplicate_moduli', methods=['GET'])
+def duplicate_moduli_report():
+    duplicate_moduli = db.dionysus.duplicate_moduli.find_one({}, {'_id': 0}, sort=[('creation_time', pymongo.DESCENDING)])
+    result = {
+        'success': True,
+        'code': 200,
+        'status': 'Operation succeeded',
+        'data': duplicate_moduli,
+    }
+    return jsonify(result), 200
+
+
+@app.route('/reports/factorable_moduli', methods=['GET'])
+def factorable_moduli_report():
+    factorable_moduli = db.dionysus.factorable_moduli.find_one({}, {'_id': 0}, sort=[('creation_time', pymongo.DESCENDING)])
+    result = {
+        'success': True,
+        'code': 200,
+        'status': 'Operation succeeded',
+        'data': factorable_moduli,
+    }
+    return jsonify(result), 200
+
+
 @app.errorhandler(404)
 def not_found(e):
     result = {
@@ -102,4 +138,4 @@ def server_error(e):
 
 
 def run_server():
-    app.run(debug=False)
+    app.run(host=conf.WEB_SERVER_HOST, port=conf.WEB_SERVER_PORT, debug=False)

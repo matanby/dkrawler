@@ -77,3 +77,11 @@ FASTGCD_OUTPUT_FILE_PATH = FASTGCD_DIR + 'vulnerable_moduli'
 
 # The path of the output GCDs after computing the fastgcd
 FASTGCD_GCD_FILE_PATH = FASTGCD_DIR + 'gcds'
+
+
+# The host the web-server should bind to
+WEB_SERVER_HOST = '0.0.0.0'
+
+
+# The port the web-server should listen to
+WEB_SERVER_PORT = 80

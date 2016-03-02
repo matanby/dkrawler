@@ -1,0 +1,25 @@
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+
+        <div class="well well-sm">
+            <b>Report creation time: </b> {{creation_time * 1000 | date:'yyyy-MM-dd HH:mm:ss' }}
+        </div>
+
+        <table class="table table-striped">
+            <thread>
+                <tr>
+                    <th>Domain</th>
+                    <th>GCD</th>
+                    <th>N</th>
+                </tr>
+            </thread>
+
+            <tr ng-repeat="moduli in factorableModuli">
+                <td><p ng-repeat="domain in moduli.domains"> {{ domain }} </p></td>
+                <td>{{ moduli.gcd | cut:false:100:'...' }}</td>
+                <td>{{ moduli.n | cut:false:50:'...'}}</td>
+            </tr>
+        </table>
+
+    </div>
+</div>
