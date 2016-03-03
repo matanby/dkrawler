@@ -28,7 +28,7 @@ def key_lengths():
 
     client.dionysus.key_lengths.insert_one({
         'creation_time': time.time(),
-        'n_lengths': {str(k): 4 * v for k, v in n_lengths.iteritems()}
+        'n_lengths': {str(k * 4): v for k, v in n_lengths.iteritems()}
     })
 
 
