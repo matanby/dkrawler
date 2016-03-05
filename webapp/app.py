@@ -1,5 +1,6 @@
 import re
 
+from gevent.wsgi import WSGIServer
 import pymongo
 from flask import Flask, jsonify, request
 from pymongo.mongo_client import MongoClient
@@ -138,4 +139,5 @@ def server_error(e):
 
 
 def run_server():
-    app.run(host=conf.WEB_SERVER_HOST, port=conf.WEB_SERVER_PORT, debug=False)
+    http_server = WSGIServer((conf.WEB_SERVER_HOST, conf.WEB_SERVER_PORT), app)
+    http_server.serve_forever()
