@@ -2,7 +2,7 @@
     <div class="col-md-6 col-md-offset-3">
 
         <div class="well well-sm">
-            <b>Filter:</b> <input ng-model="searchCriteria" ng-change="fetchSeeds()">
+            <b>Filter:</b> <input ng-model="searchCriteria" ng-model-options="{debounce:500}" ng-change="fetchSeeds()">
         </div>
 
         <table class="table table-striped">
