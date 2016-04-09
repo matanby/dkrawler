@@ -150,7 +150,7 @@ def export_duplicate_moduli_reports():
         duplicates = report['duplicates']
 
         with open(filepath, 'w') as f:
-            f.write('N,domain\n')
+            f.write('domain,N\n')
 
             for n in duplicates.keys():
                 for domain in duplicates[n]:
