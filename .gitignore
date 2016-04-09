@@ -110,3 +110,8 @@ crashlytics-build.properties
 # Dionysus log files
 dionysus.err
 dionysus.log
+
+# Backups and DB dumps
+db_dump
+reports.zip
+doc/*
