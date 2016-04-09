@@ -137,5 +137,38 @@ def factorable_moduli():
     core.reports.factorable_moduli()
 
 
+@cli.group()
+def export():
+    """
+    Export reports to CSV files.
+    """
+
+
+@export.command()
+def key_lengths():
+    """
+    Export each of the key lengths reports to a CSV file.
+    """
+
+    core.reports.export_key_lengths_reports()
+
+
+@export.command()
+def duplicate_moduli():
+    """
+    Export each of the duplicate moduli reports to a CSV file.
+    """
+
+    core.reports.export_duplicate_moduli_reports()
+
+
+@export.command()
+def factorable_moduli():
+    """
+    Export each of the factorable moduli reports to a CSV file.
+    """
+
+    core.reports.export_factorable_moduli_reports()
+
 if __name__ == '__main__':
     cli()

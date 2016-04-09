@@ -1,4 +1,5 @@
 import time
+from datetime import datetime
 from pymongo import MongoClient
 import os
 import itertools
@@ -114,3 +115,64 @@ def factorable_moduli():
         'results': results,
     })
 
+
+def export_key_lengths_reports():
+    db = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
+    reports = db.dionysus.key_lengths.find({})
+
+    if not os.path.exists(conf.KEY_LENGTHS_REPORTS_EXPORT_DIR):
+        os.makedirs(conf.KEY_LENGTHS_REPORTS_EXPORT_DIR)
+
+    for report in reports:
+        formatted_time = datetime.fromtimestamp(report['creation_time']).strftime('%Y%m%d_%H%M%S')
+        filename = '%s.csv' % formatted_time
+        filepath = os.path.join(conf.KEY_LENGTHS_REPORTS_EXPORT_DIR, filename)
+        n_lengths = report['n_lengths']
+
+        with open(filepath, 'w') as f:
+            f.write('N Length,Total Count\n')
+
+            for n_length, total_count in n_lengths.iteritems():
+                f.write('%s,%s\n' % (n_length, total_count))
+
+
+def export_duplicate_moduli_reports():
+    db = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
+    reports = db.dionysus.duplicate_moduli.find({})
+
+    if not os.path.exists(conf.DUPLICATE_MODULI_REPORTS_EXPORT_DIR):
+        os.makedirs(conf.DUPLICATE_MODULI_REPORTS_EXPORT_DIR)
+
+    for report in reports:
+        formatted_time = datetime.fromtimestamp(report['creation_time']).strftime('%Y%m%d_%H%M%S')
+        filename = '%s.csv' % formatted_time
+        filepath = os.path.join(conf.DUPLICATE_MODULI_REPORTS_EXPORT_DIR, filename)
+        duplicates = report['duplicates']
+
+        with open(filepath, 'w') as f:
+            f.write('N,domain\n')
+
+            for n in duplicates.keys():
+                for domain in duplicates[n]:
+                    f.write('%s,%s\n' % (domain, n))
+
+
+def export_factorable_moduli_reports():
+    db = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
+    reports = db.dionysus.factorable_moduli.find({})
+
+    if not os.path.exists(conf.FACTORABLE_MODULI_REPORTS_EXPORT_DIR):
+        os.makedirs(conf.FACTORABLE_MODULI_REPORTS_EXPORT_DIR)
+
+    for report in reports:
+        formatted_time = datetime.fromtimestamp(report['creation_time']).strftime('%Y%m%d_%H%M%S')
+        filename = '%s.csv' % formatted_time
+        filepath = os.path.join(conf.FACTORABLE_MODULI_REPORTS_EXPORT_DIR, filename)
+        results = report['results']
+
+        with open(filepath, 'w') as f:
+            f.write('N,gcd,domain\n')
+
+            for result in results:
+                for domain in result['domains']:
+                    f.write('%s,%s,%s\n' % (domain, result['n'], result['gcd']))

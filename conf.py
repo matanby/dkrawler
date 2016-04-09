@@ -85,3 +85,12 @@ WEB_SERVER_HOST = '0.0.0.0'
 
 # The port the web-server should listen to
 WEB_SERVER_PORT = 80
+
+# The directory where exported factorable moduli reports will be saved
+FACTORABLE_MODULI_REPORTS_EXPORT_DIR = 'factorable_moduli_reports'
+
+# The directory where exported duplicate moduli reports will be saved
+DUPLICATE_MODULI_REPORTS_EXPORT_DIR = 'duplicate_moduli_reports'
+
+# The directory where exported key lengths reports will be saved
+KEY_LENGTHS_REPORTS_EXPORT_DIR = 'key_lengths_reports'
