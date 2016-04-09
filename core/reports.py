@@ -171,7 +171,7 @@ def export_factorable_moduli_reports():
         results = report['results']
 
         with open(filepath, 'w') as f:
-            f.write('N,gcd,domain\n')
+            f.write('domain,N,gcd\n')
 
             for result in results:
                 for domain in result['domains']:
