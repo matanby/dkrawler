@@ -54,7 +54,7 @@ def scans_history():
     page = int(request.args.get('page', default=0))
     results_start_idx = page * conf.WEB_RESULTS_LIMIT
     results_end_idx = (page + 1) * conf.WEB_RESULTS_LIMIT
-    dnskeys = list(db.dionysus.scans.find({}, {'_id': 0})[results_start_idx:results_end_idx])
+    dnskeys = list(db.dionysus.scans.find({}, {'_id': 0}, sort=[('start_time', pymongo.DESCENDING)])[results_start_idx:results_end_idx])
     result = {
         'success': True,
         'code': 200,
