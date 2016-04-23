@@ -71,8 +71,8 @@ def scan(resolver, domain, client):
                 if idx == 0:
                     (idx,) = struct.unpack('!H', key_ptr[0:2])
                     key_ptr = key_ptr[2:]
-                obj['e'] = key_ptr[0:idx]
-                obj['N'] = key_ptr[idx:]
+                obj['e'] = key_ptr[0:idx].encode('hex')
+                obj['N'] = key_ptr[idx:].encode('hex')
                 # key_len = len(obj['N']) * 8
 
             client.dionysus.dnskey.insert(obj)
