@@ -61,9 +61,19 @@ def scan(resolver, domain, client):
 
             # If this is an RSA key, also parse the key itself
             if rr.algorithm in rsa_algorithms:
-                exp_len = struct.unpack('B', rr.key[0])[0]
-                obj['e'] = rr.key[1:1 + exp_len].encode("hex")
-                obj['N'] = rr.key[1 + exp_len:].encode("hex")
+                # exp_len = struct.unpack('B', rr.key[0])[0]
+                # obj['e'] = rr.key[1:1 + exp_len].encode("hex")
+                # obj['N'] = rr.key[1 + exp_len:].encode("hex")
+
+                key_ptr = rr.key
+                (idx,) = struct.unpack('!B', key_ptr[0:1])
+                key_ptr = key_ptr[1:]
+                if idx == 0:
+                    (idx,) = struct.unpack('!H', key_ptr[0:2])
+                    key_ptr = key_ptr[2:]
+                obj['e'] = key_ptr[0:idx]
+                obj['N'] = key_ptr[idx:]
+                # key_len = len(obj['N']) * 8
 
             client.dionysus.dnskey.insert(obj)
 
