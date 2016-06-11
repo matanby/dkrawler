@@ -10,19 +10,19 @@ def hex_to_int(hex_str):
     return int('0x' + hex_str, 0)
 
 
-def is_even(moduli_hex_str):
-    return hex_to_int(moduli_hex_str) % 2 == 0
+def is_even(modulus_hex_str):
+    return hex_to_int(modulus_hex_str) % 2 == 0
 
 
-def is_shared(moduli_hex_str):
-    moduli_hex_str = moduli_hex_str.split("0x", 1)[-1]
+def is_shared(modulus_hex_str):
+    modulus_hex_str = modulus_hex_str.split("0x", 1)[-1]
     db = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
-    res = db.dionysus.dnskey.find_one({'N': moduli_hex_str})
+    res = db.dionysus.dnskey.find_one({'N': modulus_hex_str})
     return res is not None
 
 
-def is_factorable(moduli_hex_str):
-    moduli = hex_to_int(moduli_hex_str)
+def is_factorable(modulus_hex_str):
+    moduli = hex_to_int(modulus_hex_str)
     db = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
     cursor = db.dionysus.dnskey.find({}, {'N': 1})
     for dnskey in cursor:

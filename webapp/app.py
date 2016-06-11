@@ -120,15 +120,15 @@ def factorable_moduli_report():
 
 @app.route('/validate_key', methods=['POST'])
 def validate_key():
-    moduli_hex_str = request.json['moduli_hex']
+    modulus_hex_str = request.json['modulus_hex']
     result = {
         'success': True,
         'code': 200,
         'status': 'Operation succeeded',
         'data': {
-            'is_even': is_even(moduli_hex_str),
-            'is_shared': is_shared(moduli_hex_str),
-            'is_factorable': is_factorable(moduli_hex_str),
+            'is_even': is_even(modulus_hex_str),
+            'is_shared': is_shared(modulus_hex_str),
+            'is_factorable': is_factorable(modulus_hex_str),
         },
     }
     return jsonify(result), 200
