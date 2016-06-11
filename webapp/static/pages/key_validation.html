@@ -1,0 +1,31 @@
+<div class="row">
+
+    <div style="text-align: center;" ng-show="requestSent">
+        <img src="/static/images/spinner.gif">
+        </br>
+        <b>Validating key. This can take a few minutes...</b>
+        </br>
+    </div>
+
+    <div class="col-md-10 col-md-offset-1">
+        <div class="well well-sm" ng-show="!requestSent">
+            <b>Enter modulus (as hex string):</b> <input class="form-control" ng-model="modulusHex">
+            <input type="button" value="Validate Key" ng-click="validateKey()">
+
+            <div ng-show="responseReceived">
+                </br>
+                </br>
+
+                <b ng-show="(!isEven && !isShared && !isFactorable)">Key validation passed. No problems found.</b>
+                <b ng-show="(isEven || isShared || isFactorable)">Key validation failed with the following problems:</b>
+                <ul>
+                    <li ng-show="isEven">Modulus is even</li>
+                    <li ng-show="isShared">Modulus is shared with another domain</li>
+                    <li ng-show="isFactorable">Modulus is factorable</li>
+                </ul>
+
+            </div>
+        </div>
+    </div>
+
+</div>

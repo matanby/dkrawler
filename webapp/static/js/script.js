@@ -73,6 +73,12 @@ app.config(function($routeProvider) {
 		.when('/factorable_moduli', {
 			templateUrl : 'static/pages/factorable_moduli.html',
 			controller  : 'factorableModuliController'
+		})
+
+		// route for the key validation page
+		.when('/key_validation', {
+			templateUrl : 'static/pages/key_validation.html',
+			controller  : 'keyValidationController'
 		});
 });
 
@@ -160,4 +166,23 @@ app.controller('factorableModuliController', function($scope, $http) {
 	};
 
 	$scope.fetchDNSKeys();
+});
+
+app.controller('keyValidationController', function($scope, $http) {
+	$scope.requestSent = false;
+	$scope.responseReceived = false;
+
+	$scope.validateKey = function () {
+		$scope.requestSent = true;
+		$scope.responseReceived = false;
+		$http.post('/validate_key', {modulus_hex: $scope.modulusHex})
+			.then(function (response) {
+				$scope.requestSent = false;
+				$scope.responseReceived = true;
+
+				$scope.isEven = response.data.data.is_even;
+				$scope.isShared = response.data.data.is_shared;
+				$scope.isFactorable = response.data.data.is_factorable;
+			});
+	};
 });
