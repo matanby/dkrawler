@@ -22,14 +22,14 @@ def is_shared(moduli_hex_str):
 
 
 def is_factorable(moduli_hex_str):
-        moduli = hex_to_int(moduli_hex_str)
-        db = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
-        cursor = db.dionysus.dnskey.find({})
-        for dnskey in cursor:
-            if 'N' not in dnskey:
-                continue
-            other_moduli = hex_to_int(dnskey['N'])
-            gcd = fractions.gcd(moduli, other_moduli)
-            if gcd > 1 and gcd != moduli:
-                return True
-        return False
+    moduli = hex_to_int(moduli_hex_str)
+    db = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
+    cursor = db.dionysus.dnskey.find({}, {'N': 1})
+    for dnskey in cursor:
+        if 'N' not in dnskey:
+            continue
+        other_moduli = hex_to_int(dnskey['N'])
+        gcd = fractions.gcd(moduli, other_moduli)
+        if gcd > 1 and gcd != moduli:
+            return True
+    return False
