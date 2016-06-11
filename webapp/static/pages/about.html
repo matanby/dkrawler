@@ -10,7 +10,7 @@
 		This goal of this project is to assess the security posture of the current DNSSEC infrastructure by analysing the security status of deployed DNSSEC cryptographic keys.</br>
 		</br>
 		In order to assess the strength of the deployed public keys, we needed to develop an infrastructure which can be used to rapidly collect key material from the DNSSEC infrastructure.
-		This resulted in the development of a fast, configurable, non-blocking crawler we have dubbed “Dionysus”.</br>
+		This resulted in the development of a fast, configurable, non-blocking crawler we have dubbed “DKrawler (DNSSEC Keys Crawler)”.</br>
 		</br>
 		The infrastructure is written in Python and allows the definition of different pluggable modules called “scanners”, which operate in a non-blocking manner using “greenlets” in order to send requests and analyse their responses. </br>
 		These responses are fed into a MongoDB document database in order to facilitate fast insertion and retrieval.</br>

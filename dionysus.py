@@ -13,7 +13,7 @@ import webapp.app
 @click.group()
 def cli():
     """
-    Dionysus - DNSSec scanner.
+    Dionysus - DNSSEC scanner.
     """
 
 
