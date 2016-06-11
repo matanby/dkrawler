@@ -6,7 +6,7 @@ from flask import Flask, jsonify, request
 from pymongo.mongo_client import MongoClient
 
 import conf
-
+from core.key_validators import is_even, is_factorable, is_shared
 
 app = Flask(__name__)
 db = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
@@ -114,6 +114,22 @@ def factorable_moduli_report():
         'code': 200,
         'status': 'Operation succeeded',
         'data': factorable_moduli,
+    }
+    return jsonify(result), 200
+
+
+@app.route('/validate_key', methods=['POST'])
+def validate_key():
+    modulus_hex_str = request.json['modulus_hex']
+    result = {
+        'success': True,
+        'code': 200,
+        'status': 'Operation succeeded',
+        'data': {
+            'is_even': is_even(modulus_hex_str),
+            'is_shared': is_shared(modulus_hex_str),
+            'is_factorable': is_factorable(modulus_hex_str),
+        },
     }
     return jsonify(result), 200
 
