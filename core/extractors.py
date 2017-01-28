@@ -4,10 +4,9 @@ import time
 import textwrap
 import gzip
 
-from pymongo import MongoClient
-
 import conf
 from core import dal
+from core.dal import db
 
 
 # The increments in which progress is printed
@@ -15,9 +14,6 @@ PRINT_STEP = 1000
 
 
 def extract_sonar_ssl_certificates(sonar_certificate_directory):
-    # Connecting to the database
-    client = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
-
     # Going over each certificate file
     for cert_file_path in os.listdir(sonar_certificate_directory):
         cert_file = open(os.path.join(sonar_certificate_directory, cert_file_path), 'r')
@@ -39,7 +35,7 @@ def extract_sonar_ssl_certificates(sonar_certificate_directory):
                     'origin': 'SonarCertificate'
                 }
 
-                client.dionysus.sslcerts.insert(cert_obj)
+                db.sslcerts.insert(cert_obj)
 
             except ImportError, e:
                 print 'Failed to import M2Crypto. Error: ' % e
@@ -52,9 +48,6 @@ def extract_sonar_ssl_certificates(sonar_certificate_directory):
 
 
 def extract_sonar_dns(sonar_dns_file):
-    # Connecting to the database
-    client = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
-
     dns_file = gzip.open(sonar_dns_file, 'r')
     domains_added = 0
     for line in dns_file:
@@ -67,7 +60,7 @@ def extract_sonar_dns(sonar_dns_file):
         domain = parts[0]
 
         # Inserting the entry to the database
-        domains_added += dal.insert_seed(client, domain, "SonarDNS")
+        domains_added += dal.insert_seed(domain, "SonarDNS")
         if domains_added % PRINT_STEP == 0:
             print '[+] Added %d domains...' % domains_added
 
@@ -76,9 +69,6 @@ def extract_sonar_dns(sonar_dns_file):
 
 
 def extract_zone_file_ds(zone_file_path, zone_file_origin):
-    # Connecting to the database
-    client = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
-
     # Parsing each DS entry in the zone file, and extracting the domain name from it
     # Since the zone files are so large, dnspython fails to handle them...
     # Luckily, the only records we're interested in are DS records (or, equivalently,
@@ -101,7 +91,7 @@ def extract_zone_file_ds(zone_file_path, zone_file_origin):
             domain = domain + "." + zone_file_origin
 
         # Inserting the entry to the database
-        domains_added += dal.insert_seed(client, domain, 'ZoneFileDS')
+        domains_added += dal.insert_seed(domain, 'ZoneFileDS')
         if domains_added % PRINT_STEP == 0:
             print '[+] Added %d domains...' % domains_added
 

@@ -107,9 +107,9 @@ crashlytics-build.properties
 
 # Created by .ignore support plugin (hsz.mobi)
 
-# Dionysus log files
-dionysus.err
-dionysus.log
+# DKrawler log files
+dkrawler.err
+dkrawler.log
 
 # Backups and DB dumps
 db_dump

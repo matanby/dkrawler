@@ -1,6 +1,6 @@
 #!/bin/sh
 ### BEGIN INIT INFO
-# Provides:          dionysus
+# Provides:          dkrawler
 # Required-Start:    $remote_fs $syslog
 # Required-Stop:     $remote_fs $syslog
 # Default-Start:     2 3 4 5
@@ -9,8 +9,8 @@
 # Description:       Enable service provided by daemon.
 ### END INIT INFO
 
-dir="/data/dionysus"
-cmd="/usr/bin/python /data/dionysus/dionysus.py run_server"
+dir="/opt/dkrawler/dkrawler"
+cmd="/opt/dkrawler/dkrawler/dkrawler.py run_server"
 user=""
 
 name=`basename $0`

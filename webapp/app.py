@@ -3,13 +3,12 @@ import re
 from gevent.wsgi import WSGIServer
 import pymongo
 from flask import Flask, jsonify, request
-from pymongo.mongo_client import MongoClient
 
 import conf
 from core.key_validators import is_even, is_factorable, is_shared
+from core.dal import db
 
 app = Flask(__name__)
-db = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
 
 
 @app.route('/', methods=['GET'])
@@ -23,7 +22,7 @@ def seeds():
     filter = re.escape(request.args.get('filter', default=''))
     results_start_idx = page * conf.WEB_RESULTS_LIMIT
     results_end_idx = (page + 1) * conf.WEB_RESULTS_LIMIT
-    seeds = list(db.dionysus.seeds.find({'domain': {'$regex': filter}}, {'_id': 0})[results_start_idx:results_end_idx])
+    seeds = list(db.seeds.find({'domain': {'$regex': filter}}, {'_id': 0})[results_start_idx:results_end_idx])
     result = {
         'success': True,
         'code': 200,
@@ -39,7 +38,7 @@ def dnskey():
     filter = re.escape(request.args.get('filter', default=''))
     results_start_idx = page * conf.WEB_RESULTS_LIMIT
     results_end_idx = (page + 1) * conf.WEB_RESULTS_LIMIT
-    dnskeys = list(db.dionysus.dnskey.find({'domain': {'$regex': filter}}, {'_id': 0})[results_start_idx:results_end_idx])
+    dnskeys = list(db.dnskey.find({'domain': {'$regex': filter}}, {'_id': 0})[results_start_idx:results_end_idx])
     result = {
         'success': True,
         'code': 200,
@@ -54,7 +53,7 @@ def scans_history():
     page = int(request.args.get('page', default=0))
     results_start_idx = page * conf.WEB_RESULTS_LIMIT
     results_end_idx = (page + 1) * conf.WEB_RESULTS_LIMIT
-    dnskeys = list(db.dionysus.scans.find({}, {'_id': 0}, sort=[('start_time', pymongo.DESCENDING)])[results_start_idx:results_end_idx])
+    dnskeys = list(db.scans.find({}, {'_id': 0}, sort=[('start_time', pymongo.DESCENDING)])[results_start_idx:results_end_idx])
     result = {
         'success': True,
         'code': 200,
@@ -66,14 +65,14 @@ def scans_history():
 
 @app.route('/status', methods=['GET'])
 def status():
-    last_scan = db.dionysus.scans.find_one({}, {'_id': 0}, sort=[('start_time', pymongo.DESCENDING)])
+    last_scan = db.scans.find_one({}, {'_id': 0}, sort=[('start_time', pymongo.DESCENDING)])
     result = {
         'success': True,
         'code': 200,
         'status': 'Operation succeeded',
         'data': {
-            'seeds_count': db.dionysus.seeds.count(),
-            'dnskey_count': db.dionysus.dnskey.count(),
+            'seeds_count': db.seeds.count(),
+            'dnskey_count': db.dnskey.count(),
             'last_scan_info': last_scan,
             'daily_scan_times': conf.DAILY_SCAN_TIMES,
             'rescan_period': conf.RESCAN_PERIOD
@@ -84,7 +83,7 @@ def status():
 
 @app.route('/reports/key_lengths', methods=['GET'])
 def key_lengths_report():
-    key_lengths = db.dionysus.key_lengths.find_one({}, {'_id': 0}, sort=[('creation_time', pymongo.DESCENDING)])
+    key_lengths = db.key_lengths.find_one({}, {'_id': 0}, sort=[('creation_time', pymongo.DESCENDING)])
     result = {
         'success': True,
         'code': 200,
@@ -96,7 +95,7 @@ def key_lengths_report():
 
 @app.route('/reports/duplicate_moduli', methods=['GET'])
 def duplicate_moduli_report():
-    duplicate_moduli = db.dionysus.duplicate_moduli.find_one({}, {'_id': 0}, sort=[('creation_time', pymongo.DESCENDING)])
+    duplicate_moduli = db.duplicate_moduli.find_one({}, {'_id': 0}, sort=[('creation_time', pymongo.DESCENDING)])
     result = {
         'success': True,
         'code': 200,
@@ -108,7 +107,7 @@ def duplicate_moduli_report():
 
 @app.route('/reports/factorable_moduli', methods=['GET'])
 def factorable_moduli_report():
-    factorable_moduli = db.dionysus.factorable_moduli.find_one({}, {'_id': 0}, sort=[('creation_time', pymongo.DESCENDING)])
+    factorable_moduli = db.factorable_moduli.find_one({}, {'_id': 0}, sort=[('creation_time', pymongo.DESCENDING)])
     result = {
         'success': True,
         'code': 200,

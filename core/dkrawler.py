@@ -6,11 +6,11 @@ import dns
 import dns.exception
 import dns.resolver
 import eventlet
-from pymongo import MongoClient
 import schedule
 
 import conf
 import dal
+from dal import db
 import scanners
 from core import reports
 
@@ -82,11 +82,11 @@ def configure_logging():
     LOGGER_INITIALIZED = True
 
 
-def exec_retry_scan(scan_func, dns_resolver, domain, client):
+def exec_retry_scan(scan_func, dns_resolver, domain):
     num_timeouts = 0
     while True:
         try:
-            scan_func(dns_resolver, domain, client)
+            scan_func(dns_resolver, domain, db)
             return
         except dns.exception.Timeout as e:
             num_timeouts += 1
@@ -95,7 +95,7 @@ def exec_retry_scan(scan_func, dns_resolver, domain, client):
                 raise
 
 
-def scan_domain(client, domain):
+def scan_domain(domain):
     dns_resolver = dns.resolver.Resolver()
     dns_resolver.use_edns(0, 0, 4096)
     dns_resolver.timeout = conf.QUERY_TIMEOUT
@@ -103,7 +103,7 @@ def scan_domain(client, domain):
     bad_seed = False
     for scan_func in scanners.scan_functions:
         try:
-            exec_retry_scan(scan_func, dns_resolver, domain, client)
+            exec_retry_scan(scan_func, dns_resolver, domain)
         except dns.resolver.NXDOMAIN as e:
             logging.warning('Got NXDomain when trying to scan %s, marking bad seed' % domain)
             bad_seed = True
@@ -123,12 +123,11 @@ def scan_domain(client, domain):
         except Exception, ex:
             logging.exception('Unexpected exception when querying %s' % domain)
 
-    dal.update_seed(client, domain, bad_seed)
+    dal.update_seed(domain, bad_seed)
 
 
 def scan_domains():
     configure_logging()
-    client = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
 
     # Monkey patch system libraries to behave be non-blocking.
     eventlet.monkey_patch()
@@ -141,13 +140,13 @@ def scan_domains():
 
     scan_start_time = time.time()
 
-    cursor = client.dionysus.seeds.find({
+    cursor = db.seeds.find({
         'last_scan': {'$lt': time.time() - conf.RESCAN_PERIOD},
         'bad': False
     })
 
     logging.info('Found %d seeds' % cursor.count())
-    scan_id = client.dionysus.scans.insert_one({
+    scan_id = db.scans.insert_one({
         'start_time': time.time(),
         'end_time': -1,
         'number_of_domains': cursor.count(),
@@ -155,14 +154,13 @@ def scan_domains():
 
     for seed in cursor:
         domain = str(seed['domain'])
-        # if not client.dionysus.dnskey.find_one({'domain': domain}):
-        pool.spawn(scan_domain, client, domain)
+        pool.spawn(scan_domain, domain)
 
     # Waiting for the scan to end
     pool.waitall()
 
     scan_end_time = time.time()
-    client.dionysus.scans.update_one({'_id': scan_id}, {'$set': {'end_time': scan_end_time}})
+    db.scans.update_one({'_id': scan_id}, {'$set': {'end_time': scan_end_time}})
 
     scan_time = scan_end_time - scan_start_time
     logging.info('Total scan time: %s seconds' % scan_time)

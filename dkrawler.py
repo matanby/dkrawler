@@ -3,17 +3,17 @@
 import click
 import pymongo
 
-import core.dionysus
+import core.dkrawler
 import core.extractors
 import core.reports
-import core.dal
+from core import dal
 import webapp.app
 
 
 @click.group()
 def cli():
     """
-    Dionysus - DNSSEC scanner.
+    DKrawler - DNSSEC scanner.
     """
 
 
@@ -23,7 +23,7 @@ def scan():
     Start a new scan.
     """
 
-    core.dionysus.scan_domains()
+    core.dkrawler.scan_domains()
 
 
 @cli.command()
@@ -32,7 +32,7 @@ def run_server():
     Run the web-server and scans scheduler.
     """
 
-    core.dionysus.init()
+    core.dkrawler.init()
     webapp.app.run_server()
 
 
@@ -49,7 +49,7 @@ def create_db_indices():
     Create DB indices.
     """
 
-    core.dal.create_database_indices()
+    dal.create_database_indices()
 
 
 @manage.command()
@@ -58,7 +58,7 @@ def reset_seeds_status():
     Reset the status of all seeds to initial values (bad: False, last_scan: 0)
     """
 
-    core.dal.reset_seeds_status(pymongo.MongoClient())
+    dal.reset_seeds_status()
 
 
 @cli.group()

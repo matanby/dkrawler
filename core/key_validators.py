@@ -1,8 +1,7 @@
 import fractions
 
-from pymongo.mongo_client import MongoClient
-
 import conf
+from dal import db
 
 
 def hex_to_int(hex_str):
@@ -16,15 +15,13 @@ def is_even(modulus_hex_str):
 
 def is_shared(modulus_hex_str):
     modulus_hex_str = modulus_hex_str.split("0x", 1)[-1]
-    db = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
-    res = db.dionysus.dnskey.find_one({'N': modulus_hex_str})
+    res = db.dnskey.find_one({'N': modulus_hex_str})
     return res is not None
 
 
 def is_factorable(modulus_hex_str):
     moduli = hex_to_int(modulus_hex_str)
-    db = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
-    cursor = db.dionysus.dnskey.find({}, {'N': 1})
+    cursor = db.dnskey.find({}, {'N': 1})
     for dnskey in cursor:
         if 'N' not in dnskey:
             continue

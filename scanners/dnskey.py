@@ -22,7 +22,7 @@ algorithm_names = {
 rsa_algorithms = [1, 5, 7, 8, 10]
 
 
-def scan(resolver, domain, client):
+def scan(resolver, domain, db):
     """
     Scans the given domain name for its DNSKEY records
     """
@@ -30,7 +30,7 @@ def scan(resolver, domain, client):
     try:
         logging.debug(domain)
         rrset = resolver.query(domain, 'DNSKEY')
-        client.dionysus.dnskey.remove({'domain': domain})
+        db.dnskey.remove({'domain': domain})
 
         for rr in rrset:
             if not hasattr(rr, 'flags'):
@@ -75,7 +75,7 @@ def scan(resolver, domain, client):
                 obj['N'] = key_ptr[idx:].encode('hex')
                 # key_len = len(obj['N']) * 8
 
-            client.dionysus.dnskey.insert(obj)
+            db.dnskey.insert(obj)
 
     except dns.resolver.NoAnswer, e:
         logging.info('No DNSKEY entry for %s' % domain)

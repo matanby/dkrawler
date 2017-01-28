@@ -1,15 +1,15 @@
 import time
 from datetime import datetime
-from pymongo import MongoClient
 import os
 import itertools
 import conf
 import subprocess
 
+from dal import db
+
 
 def key_lengths():
-    client = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
-    cursor = client.dionysus.dnskey.find()
+    cursor = db.dnskey.find()
 
     # Creating a key length histogram
     n_lengths = {}
@@ -27,15 +27,14 @@ def key_lengths():
     for length in sorted(n_lengths.keys()):
         print "%d bits : %d" % (length * 4, n_lengths[length])
 
-    client.dionysus.key_lengths.insert_one({
+    db.key_lengths.insert_one({
         'creation_time': time.time(),
         'n_lengths': {str(k * 4): v for k, v in n_lengths.iteritems()}
     })
 
 
 def duplicate_moduli():
-    client = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
-    cursor = client.dionysus.dnskey.find({'N': {'$exists': True}})
+    cursor = db.dnskey.find({'N': {'$exists': True}})
     n_map = {}
 
     for entry in cursor:
@@ -54,12 +53,12 @@ def duplicate_moduli():
             print n
             print "Found in:"
             duplicates[n] = []
-            cursor = client.dionysus.dnskey.find({'N': n})
+            cursor = db.dnskey.find({'N': n})
             for entry in cursor:
                 print entry['domain']
                 duplicates[n].append(entry['domain'])
 
-    client.dionysus.duplicate_moduli.insert_one({
+    db.duplicate_moduli.insert_one({
         'creation_time': time.time(),
         'duplicates': duplicates,
     })
@@ -67,9 +66,8 @@ def duplicate_moduli():
 
 def factorable_moduli():
     # Creating the moduli file
-    client = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
     moduli_file = open(conf.FASTGCD_INPUT_FILE_PATH, 'w')
-    cursor = client.dionysus.dnskey.find({'N': {'$exists': True}})
+    cursor = db.dnskey.find({'N': {'$exists': True}})
     for entry in cursor:
         moduli_file.write(entry['N'])
         moduli_file.write('\n')
@@ -94,7 +92,7 @@ def factorable_moduli():
     for n_line, gcd_line in itertools.izip(vuln_moduli_file, gcd_file):
         n = n_line.strip()
         gcd = gcd_line.strip()
-        cursor = client.dionysus.dnskey.find({'N': n})
+        cursor = db.dnskey.find({'N': n})
     
         # Collecting the affected domains
         domains = []
@@ -110,15 +108,14 @@ def factorable_moduli():
     vuln_moduli_file.close()
     gcd_file.close()
 
-    client.dionysus.factorable_moduli.insert_one({
+    db.factorable_moduli.insert_one({
         'creation_time': time.time(),
         'results': results,
     })
 
 
 def export_key_lengths_reports():
-    db = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
-    reports = db.dionysus.key_lengths.find({})
+    reports = db.key_lengths.find({})
 
     if not os.path.exists(conf.KEY_LENGTHS_REPORTS_EXPORT_DIR):
         os.makedirs(conf.KEY_LENGTHS_REPORTS_EXPORT_DIR)
@@ -137,8 +134,7 @@ def export_key_lengths_reports():
 
 
 def export_duplicate_moduli_reports():
-    db = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
-    reports = db.dionysus.duplicate_moduli.find({})
+    reports = db.duplicate_moduli.find({})
 
     if not os.path.exists(conf.DUPLICATE_MODULI_REPORTS_EXPORT_DIR):
         os.makedirs(conf.DUPLICATE_MODULI_REPORTS_EXPORT_DIR)
@@ -158,8 +154,7 @@ def export_duplicate_moduli_reports():
 
 
 def export_factorable_moduli_reports():
-    db = MongoClient(conf.DATABASE_SERVER, conf.DATABASE_PORT)
-    reports = db.dionysus.factorable_moduli.find({})
+    reports = db.factorable_moduli.find({})
 
     if not os.path.exists(conf.FACTORABLE_MODULI_REPORTS_EXPORT_DIR):
         os.makedirs(conf.FACTORABLE_MODULI_REPORTS_EXPORT_DIR)
