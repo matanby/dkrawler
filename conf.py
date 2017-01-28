@@ -50,7 +50,7 @@ QUERY_TIMEOUT = 7
 WEB_RESULTS_LIMIT = 20
 
 # The directory of the fastgcd binary
-FASTGCD_DIR = '/opt/dkrawler/fastgcd/fastgcd/'
+FASTGCD_DIR = '/opt/fastgcd/'
 
 # The path of the input file for the fastgcd binary
 FASTGCD_INPUT_FILE_PATH = FASTGCD_DIR + 'input_moduli.txt'

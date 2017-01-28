@@ -9,8 +9,8 @@
 # Description:       Enable service provided by daemon.
 ### END INIT INFO
 
-dir="/opt/dkrawler/dkrawler"
-cmd="/opt/dkrawler/dkrawler/dkrawler.py run_server"
+dir="/opt/dkrawler/"
+cmd="/opt/dkrawler/dkrawler.py run_server"
 user=""
 
 name=`basename $0`
