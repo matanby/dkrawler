@@ -75,6 +75,12 @@ app.config(function($routeProvider) {
 			controller  : 'factorableModuliController'
 		})
 
+		// route for the domain validation page
+		.when('/domain_validation', {
+			templateUrl : 'static/pages/domain_validation.html',
+			controller  : 'domainValidationController'
+		})
+
 		// route for the key validation page
 		.when('/key_validation', {
 			templateUrl : 'static/pages/key_validation.html',
@@ -166,6 +172,17 @@ app.controller('factorableModuliController', function($scope, $http) {
 	};
 
 	$scope.fetchDNSKeys();
+});
+
+app.controller('domainValidationController', function($scope, $http) {
+    $scope.searchCriteria = '';
+
+    $scope.fetchDNSKeys = function () {
+        $http.get('/dnskey?' + "filter=" + $scope.searchCriteria)
+            .then(function (response) {$scope.dnskeys = response.data.data;});
+    };
+
+    $scope.fetchDNSKeys();
 });
 
 app.controller('keyValidationController', function($scope, $http) {

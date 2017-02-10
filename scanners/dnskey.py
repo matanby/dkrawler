@@ -56,7 +56,9 @@ def scan(resolver, domain, db):
                 'is_ksk': is_ksk,
                 'is_revoked': is_revoked,
                 'algorithm_name': algorithm_name,
-                'key': rr.key.encode("hex")
+                'key': rr.key.encode("hex"),
+                'is_shared': False,
+                'is_factorable': False,
             }
 
             # If this is an RSA key, also parse the key itself

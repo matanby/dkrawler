@@ -17,19 +17,21 @@ def key_lengths():
         if 'N' not in entry:
             continue
 
-        n_len = len(entry['N'])
-        if n_len not in n_lengths:
-            n_lengths[n_len] = 1
-        else:
-            n_lengths[n_len] += 1
+        n_len = len(entry['N']) * 4
+        n_lengths.setdefault(n_len, 0)
+        n_lengths[n_len] += 1
+
+        if n_len <= 768:
+            entry['is_factorable'] = True
+            entry.save()
 
     # Printing the actual key length histogram, sorted
     for length in sorted(n_lengths.keys()):
-        print "%d bits : %d" % (length * 4, n_lengths[length])
+        print "%d bits : %d" % (length, n_lengths[length])
 
     db.key_lengths.insert_one({
         'creation_time': time.time(),
-        'n_lengths': {str(k * 4): v for k, v in n_lengths.iteritems()}
+        'n_lengths': {str(k): v for k, v in n_lengths.iteritems()}
     })
 
 
@@ -39,10 +41,8 @@ def duplicate_moduli():
 
     for entry in cursor:
         n = entry['N']
-        if n not in n_map:
-            n_map[n] = 1
-        else:
-            n_map[n] += 1
+        n_map.setdefault(n, 0)
+        n_map[n] += 1
 
     duplicates = {}
 
@@ -57,6 +57,8 @@ def duplicate_moduli():
             for entry in cursor:
                 print entry['domain']
                 duplicates[n].append(entry['domain'])
+                entry['is_shared'] = True
+                entry.save()
 
     db.duplicate_moduli.insert_one({
         'creation_time': time.time(),
@@ -98,6 +100,8 @@ def factorable_moduli():
         domains = []
         for entry in cursor:
             domains.append(entry['domain'])
+            entry['is_factorable'] = True
+            entry.save()
 
         results.append({
             'n': n,

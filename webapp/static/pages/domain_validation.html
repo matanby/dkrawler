@@ -1,0 +1,25 @@
+<div class="row">
+    <div class="col-md-10 col-md-offset-1">
+
+        <div class="well well-sm">
+            <b>Filter:</b> <input ng-model="searchCriteria" ng-model-options="{debounce:500}" ng-change="fetchDNSKeys()">
+        </div>
+
+        <table class="table table-striped">
+            <thread>
+                <tr>
+                    <th>Domain</th>
+                    <th>Is Modulus Shared?</th>
+                    <th>Is Key Factorable?</th>
+                </tr>
+            </thread>
+
+            <tr ng-repeat="dnskey in dnskeys">
+                <td>{{ dnskey.domain }}</td>
+                <td>{{ dnskey.is_shared }}</td>
+                <td>{{ dnskey.is_factorable }}</td>
+            </tr>
+        </table>
+
+    </div>
+</div>
