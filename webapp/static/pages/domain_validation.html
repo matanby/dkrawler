@@ -9,6 +9,7 @@
             <thread>
                 <tr>
                     <th>Domain</th>
+                    <th>N</th>
                     <th>Is Modulus Shared?</th>
                     <th>Is Key Factorable?</th>
                 </tr>
@@ -16,6 +17,7 @@
 
             <tr ng-repeat="dnskey in dnskeys">
                 <td>{{ dnskey.domain }}</td>
+                <td>{{ dnskey.N | cut:false:20:'...'}}</td>
                 <td>{{ dnskey.is_shared }}</td>
                 <td>{{ dnskey.is_factorable }}</td>
             </tr>
