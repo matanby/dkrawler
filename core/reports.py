@@ -23,7 +23,7 @@ def key_lengths():
 
         if n_len <= 768:
             entry['is_factorable'] = True
-            entry.save()
+            db.dnskey.save(entry)
 
     # Printing the actual key length histogram, sorted
     for length in sorted(n_lengths.keys()):
@@ -58,7 +58,7 @@ def duplicate_moduli():
                 print entry['domain']
                 duplicates[n].append(entry['domain'])
                 entry['is_shared'] = True
-                entry.save()
+                db.dnskey.save(entry)
 
     db.duplicate_moduli.insert_one({
         'creation_time': time.time(),
@@ -101,7 +101,7 @@ def factorable_moduli():
         for entry in cursor:
             domains.append(entry['domain'])
             entry['is_factorable'] = True
-            entry.save()
+            db.dnskey.save(entry)
 
         results.append({
             'n': n,
